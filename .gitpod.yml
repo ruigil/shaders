@@ -1,6 +1,6 @@
 tasks:
   - init: echo "Hello and Welcome !"
-    command: ""
+    command: echo "Open a shader, right-click and choose the option 'Shader Toy GLSL Preview'"
 
 vscode:
   extensions:
