@@ -5,21 +5,19 @@
 // https://pixelspiritdeck.com/
 
 float fill(float f, float i) { return  abs(i - smoothstep(0., 0.01, f)); }
-float tri(vec2 r) { return max( dot( vec2(abs(r.x),r.y), vec2(.866,.5)), - r.y ) - .433; }
 float stroke(float f, float w, float i) { return abs(i - smoothstep(0., .01, abs(f) - (w *.5) )); }
+float tri(vec2 r) { return max( dot( vec2(abs(r.x),r.y), vec2(.866,.5)), - r.y ) - .433; }
+float circle(vec2 r, float radius) { return length(r) - radius; }
 
-// function composition and symmetry allow us to create a diamond by making
-// a symmetric copy of the triangle on the y axis
-float diamond(vec2 r) { return tri(vec2(r.x, abs(r.y))); }
 
 void main() { 
-
     vec2 r = ref;
 
+    // to make a heart, start from a circle, and deform the space in the
+    // y axis with a symmetric parabola on the x axis
     float f = 
-        stroke(diamond(r), .01, 1.) +
-        stroke(diamond(r * 1.15), 0.02, 1.) +
-        fill(diamond(r * 1.35), 1.);
+        fill( circle( vec2( r.x, r.y  - .9 * abs(r.x) + .5 * abs(r.x*r.x) ), .5), 1.) * 
+        stroke( tri( r*4. - vec2(.0,.4)), .1, .0);
         
     oPixel = vec4(vec3(f), 1.);
 }

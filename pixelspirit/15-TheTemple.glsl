@@ -9,7 +9,7 @@ float fill(float f, float i) { return  abs(i - smoothstep(0., 0.01, f)); }
 // A sdf for a triangle, by taking the max of 3 lines.
 // two symmetrical lines in the x axis, and one for the base in the y axis. 
 // sin(60 dg) = 0.866 cos(60 dg) = .5 
-float tri(vec2 r) { return max(abs(r.x) + .5 * r.y - .433, - r.y - .433 ); }
+float tri(vec2 r) { return max( dot( vec2(abs(r.x),r.y), vec2(.866,.5)), - r.y ) - .433; }
 
 void main() { 
     vec2 r = ref;

@@ -18,7 +18,7 @@ vec2 moda(vec2 r, float n) {
 // with 36 * 2. degrees and replicate the domain in the circle with 'moda' 5. times.
 float star5(vec2 r) {
     r = moda(r * rot(radians(-54.)), 5. ) * rot(radians(54.));
-    return (abs(r.x) * .951) + (0.309 * r.y) - .475;
+    return dot( vec2(abs(r.x), r.y ), vec2(.951,.309) ) - .475;
 }
 
 void main() { 

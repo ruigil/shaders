@@ -5,7 +5,7 @@
 // https://pixelspiritdeck.com/
 
 float fill(float f, float i) { return  abs(i - smoothstep(0., 0.01, f)); }
-float tri(vec2 r) { return max(abs(r.x) + 0.5 * r.y - .433, - r.y - .433 ); }
+float tri(vec2 r) { return max( dot( vec2(abs(r.x),r.y), vec2(.866,.5)), - r.y ) - .433; }
 float stroke(float f, float w, float i) { return abs(i - smoothstep(0., .01, abs(f) - (w *.5) )); }
 float circle(vec2 center, float radius) { return length(center) - radius; }
 
