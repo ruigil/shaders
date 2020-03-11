@@ -9,15 +9,15 @@ float stroke(float f, float w, float i) { return abs(i - smoothstep(0., .01, abs
 float circle(vec2 center, float radius) { return length(center) - radius; }
 mat2 rot(float a) { float c = cos(a); float s = sin(a); return mat2(c,-s,s,c); }
 
-vec2 moda(vec2 r, float n) { 
-    float angle = atan(r.y,r.x); 
+vec2 moda(vec2 r, float n, float start) { 
+    float angle = atan(r.y,r.x) - start; 
     return r * rot( mod(angle, 6.283 / n) - angle); 
 }
 
 // to model a star5, we use a symmetric line around the vertical axis
 // with 36 * 2. degrees and replicate the domain in the circle with 'moda' 5. times.
 float star5(vec2 r) {
-    r = moda(r * rot(radians(-54.)), 5. ) * rot(radians(54.));
+    r = moda(r , 5., radians(54.));
     return dot( vec2(abs(r.x), r.y ), vec2(.951,.309) ) - .475;
 }
 
