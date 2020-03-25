@@ -3,7 +3,7 @@
 #define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
 
 #include 'easing-functions.glsl'
-#include '../2d-utils.glsl'
+#include '../utils/2d-utils.glsl'
 
 // squaring the circle...
 // using and easing function to animate

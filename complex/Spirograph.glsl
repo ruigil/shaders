@@ -19,7 +19,7 @@ https://www.youtube.com/watch?v=T647CGsuOVU
 #define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
 
 #include 'complex-math.glsl'
-#include '../2d-utils.glsl'
+#include '../utils/2d-utils.glsl'
 
 #define nf 2
 // Question: Is it possible to take the Fourier series parametric curve
