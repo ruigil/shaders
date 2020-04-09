@@ -23,6 +23,13 @@ mat2 rot(float a) { float c = cos(a); float s = sin(a); return mat2(c,-s,s,c); }
 // returns the reference frame in modular polar form, with a start angle
 vec2 modpolar(vec2 r, float n, float start) { float angle = atan(r.y,r.x) - start; return r * rot( mod(angle, 6.283 / n) - angle); }
 
+// a 'fold' is a kind of generic abs(). 
+// it reflects half of the plane in the other half
+// the variable 'a' represents the angle of an axis going through the origin
+// so in normalized coordinates uv [-1,1] 
+// fold(uv,radians(0.)) == abs(uv.y) and fold(uv,radians(90.)) == abs(uv.x) 
+vec2 fold(vec2 r, float a) { a -= 1.57; vec2 axis = vec2(cos(a),sin(a)); return r-(2.*min(dot(r,axis),.0)*axis); }
+
 // flips the sign of the variable, remove the zero condition that is interpreted as 1.
 float signz(float v) { return v == 0. ? 1. : sign(v); }
 
