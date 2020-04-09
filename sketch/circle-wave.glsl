@@ -13,7 +13,7 @@ void main() {
     vec2 r2 = floor(r) * 36.;
     
     // make a rotation with an offset that depends
-    // on the y and y component of the square 
+    // on the x and y component of the square 
     vec2 r3 = r1 * rot(radians(r2.x + r2.y + iTime * 180.));
 
     float f = 
