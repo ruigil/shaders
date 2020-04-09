@@ -3,7 +3,6 @@
 
 #include '../utils/2d-utils.glsl'
 #include '../utils/noise.glsl'
-#include '../animation/easing-functions.glsl'
 
 void main() {
 
