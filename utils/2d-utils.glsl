@@ -44,3 +44,6 @@ float stroke(float d, float w, bool f) {  return abs(ssaa(abs(d)-w*.5) - float(f
 
 // fills an sdf 'd', and a fill 'f'. false for the fill means inverse 
 float fill(float d, bool f) { return abs(ssaa(d) - float(f)); }
+
+// linear oscilator, gives a triangle wave with v period 1. 
+float losc(float v) { return 2.* (abs(floor(mod(v*2.,2.)) - fract(v*2.)) -.5 ); }
