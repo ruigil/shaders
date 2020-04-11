@@ -6,10 +6,8 @@
 void main() {
     vec2 r = ref * 10.;
 
-    // every other tile
-    float m = mod(floor(r.x) + floor(r.y) , 2.);
-    // rotate the pattern 90 degrees
-    r = m == 0. ? fract(r)-.5 : fract(r.yx)-.5;
+    // create tiles and every other tile rotate the pattern 90 degrees
+    r = mod(floor(r.x) + floor(r.y) , 2.) == 0. ? fract(r)-.5 : fract(r.yx)-.5;
     
     // the pattern
     float v = 
