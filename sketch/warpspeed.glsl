@@ -49,5 +49,8 @@ void main( void ) {
         f = max(f, star  * (i*.1) );
     }
 
-    oPixel = vec4(vec3(f * length(r)*3. ),1.);
+    // make stars close to the center dimmer
+    f *= length(r) * 4.;
+
+    oPixel = vec4(vec3(f),1.);
 }
