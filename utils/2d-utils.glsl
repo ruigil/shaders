@@ -39,11 +39,22 @@ float xor(float f1, float f2) { return abs(f1-f2); }
 // smoothstep antialias with fwidth
 float ssaa(float v) { return smoothstep(-1. ,1. ,v / fwidth(v) ); }
 
+// smoothstep antialias with epsilon 
+float ssaae(float v, float e) { return smoothstep(0. ,e , v ); }
+
 // stroke an sdf 'd', with a width 'w', and a fill 'f' 
 float stroke(float d, float w, bool f) {  return abs(ssaa(abs(d)-w*.5) - float(f)); }
 
+// stroke an sdf 'd', with a width 'w', and a fill 'f' 
+// this overload version allows an epsilon when fwidth is unsuitable
+float stroke(float d, float w, float e, bool f) {  return abs(ssaae(abs(d)-w*.5,e) - float(f)); }
+
 // fills an sdf 'd', and a fill 'f'. false for the fill means inverse 
 float fill(float d, bool f) { return abs(ssaa(d) - float(f)); }
+
+// fills an sdf 'd', and a fill 'f'. false for the fill means inverse 
+// this overload version allows an epsilon when fwidth is unsuitable
+float fill(float d, float e, bool f) { return abs(ssaae(d,e) - float(f)); }
 
 // linear oscilator, gives a triangle wave with v period 1. 
 float losc(float v) { v+= .25; return 2.* (abs(floor(mod(v*2.,2.)) - fract(v*2.)) -.5 ); }

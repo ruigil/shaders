@@ -46,24 +46,24 @@ void main() {
     // draw one of 4 rotated patterns with equal probability
     float f =
           n <= .2 ? 
-            stroke(circle(hr-vec2(.5,-.866),.5) ,.3,true) +
-            stroke(circle(hr-vec2(-1.,0.),.5) ,.3,true) +
-            stroke(circle(hr-vec2(.5,.866),.5) ,.3,true)
+            stroke(circle(hr-vec2(.5,-.866),.5) ,.3,.01,true) +
+            stroke(circle(hr-vec2(-1.,0.),.5) ,.3,.01,true) +
+            stroke(circle(hr-vec2(.5,.866),.5) ,.3,.01,true)
         : n <= .4 ? 
-            fill(rect(hr,vec2(.3,1.732)) ,true) *
-            fill(rect(hr,vec2(.4,0.8)) ,false) +
-            fill(circle(abs(hr)-vec2(0.,0.4),.15) ,true) +
-            stroke(circle(abs(hr)-vec2(1.,0.),.5) ,.3,true)
+            fill(rect(hr,vec2(.3,1.732)) ,.01,true) *
+            fill(rect(hr,vec2(.4,0.8)) ,.01,false) +
+            fill(circle(abs(hr)-vec2(0.,0.4),.15) ,.01,true) +
+            stroke(circle(abs(hr)-vec2(1.,0.),.5) ,.3,.01,true)
         : n <= .6 ?
-            fill(rect(hr,vec2(.3,1.732)) ,true) +
-            stroke(circle(abs(hr)-vec2(1.,.0),.5) ,.3,true)
+            fill(rect(hr,vec2(.3,1.732)) ,.01,true) +
+            stroke(circle(abs(hr)-vec2(1.,.0),.5) ,.3,.01,true)
         :
-            fill(rect(hr*rot(radians(-60.)),vec2(.3,1.732)),true) *
-            fill(rect(hr*rot(radians(60.)),vec2(.4,1.732)),false) +
-            fill(rect(hr*rot(radians(60.)),vec2(.3,1.732)),true) +
-            fill(rect(hr,vec2(.3,1.732)) ,true) *
-            fill(rect(hr,vec2(.4,0.8)) ,false) +
-            fill(circle(abs(hr)-vec2(0.,0.4),.15) ,true);
+            fill(rect(hr*rot(radians(-60.)),vec2(.3,1.732)),.01,true) *
+            fill(rect(hr*rot(radians(60.)),vec2(.4,1.732)),.01,false) +
+            fill(rect(hr*rot(radians(60.)),vec2(.3,1.732)),.01,true) +
+            fill(rect(hr,vec2(.3,1.732)) ,.01,true) *
+            fill(rect(hr,vec2(.4,0.8)) ,.01,false) +
+            fill(circle(abs(hr)-vec2(0.,0.4),.15) ,.01, true);
     
     // uncomment the next line to see the remapped plane
     //f = length(r.xy);
