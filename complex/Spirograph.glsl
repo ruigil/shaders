@@ -18,7 +18,7 @@ https://www.youtube.com/watch?v=T647CGsuOVU
 #define oPixel gl_FragColor
 #define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
 
-#include 'complex-math.glsl'
+#include '../utils/complex-math.glsl'
 #include '../utils/2d-utils.glsl'
 
 #define nf 2

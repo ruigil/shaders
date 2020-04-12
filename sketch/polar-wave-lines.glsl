@@ -3,7 +3,7 @@
 
 #include '../utils/2d-utils.glsl'
 #include '../utils/noise.glsl'
-#include '../complex/complex-math.glsl'
+#include '../utils/complex-math.glsl'
 
 
 void main() {

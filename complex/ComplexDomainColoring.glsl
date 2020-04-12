@@ -1,5 +1,5 @@
-// licence: https://creativecommons.org/licenses/by/4.0/
-// link: https://www.shadertoy.com/view/ltjczK
+#define oPixel gl_FragColor
+#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
 
 /*
 When you graph a real function y=f(x) you need a plane (2D). When you 
@@ -15,12 +15,9 @@ this youtube serie is very good !
 https://www.youtube.com/watch?v=T647CGsuOVU
 */
 
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
-
 #define speed iTime*.05
 
-#include 'complex-math.glsl'
+#include '../utils/complex-math.glsl'
 
 //sinz, cosz and tanz came from -> https://www.shadertoy.com/view/Mt2GDV
 vec2 zsin(vec2 z) {
