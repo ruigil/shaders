@@ -13,7 +13,7 @@ void main( void ) {
     // to prove that a good illusion is almost as good as the real thing :)
 
     // to construct the starfield, we acumullate 4 polar grids.
-    // in the radial axis, we use a random function to put a star
+    // in the radial axis, we use a random function to choose a star
 
     // the next step is to deform the radial axis with a pow function 
     // raised to a number less than 1.
