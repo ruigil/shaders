@@ -16,6 +16,9 @@ void main() {
     // they are a kind of toolbox, you use to get 
     // the results you want
 
+    // the functions are in the lib included above
+    // this shader only graphs them
+
     // these functions are from Inigo Quilez
     // http://www.iquilezles.org/www/articles/functions/functions.htm
 
