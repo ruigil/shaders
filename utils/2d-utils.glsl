@@ -17,7 +17,7 @@ float poly(vec2 r, float radius, float n) {  return length(r) * cos(mod(atan(r.y
 // define a angular pattern of rays around the reference frame. 
 float rays(vec2 r, float n) { return mod(atan(r.y,r.x), 6.283 / n ) - (3.14 / n); }
 
-// 2d rotation matrix
+// 2d rotation matrix 
 mat2 rot(float a) { float c = cos(a); float s = sin(a); return mat2(c,-s,s,c); }
 
 // returns the reference frame in modular polar form, with a start angle
