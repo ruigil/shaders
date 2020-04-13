@@ -4,7 +4,7 @@
 #include '../utils/2d-utils.glsl'
 #include '../utils/noise.glsl'
 
-// Album cover "Unknow Pleasure" from Joy Division 
+// Album cover "Unknow Pleasures" from Joy Division 
 // https://blogs.scientificamerican.com/sa-visual/pop-culture-pulsar-origin-story-of-joy-division-s-unknown-pleasures-album-cover-video/
 
 void main() {
