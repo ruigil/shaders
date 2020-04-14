@@ -24,11 +24,11 @@ void main() {
     // so "for" loops must be avoided or used with the most care
 
     // this shader constructs a grid with a fractionalized space that is a way to repeat space
-    // to avoid the big for loop and to manage the overflow of the rotating square in neighbour 
-    // cells, with a small for loop to accumulate the contribution of neighbour cells.
+    // to avoid the big for loop, and use a small for loop of 9 iterations to manage the overflow 
+    // of the rotating squares in neighbour cells.
 
-    // so in a 10x10 grid we will do 9 iterations only, instead of 100
-    // and it is constant speed no matter the size of the grid
+    // so instead a 100 iterations in a 10x10 grid we will do 9 iterations only
+    // and always do 9 no matter the size of the grid
     
     // grid size  
     float gs = 4.;
