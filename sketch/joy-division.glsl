@@ -20,7 +20,7 @@ void main() {
     // frame to make it go up
     float v = max(texture(iChannel0,t-vec2(.0,.01)).r ,.0);
 
-    r += vec2(.0,.5);
+    r += vec2(.0,.75);
     // the pulse is  perlin noise, modulated by a cosine
     float pulse =  .5 * noise( vec2(r.x*20.,iTime*5.)) * max(0.,cos(3.*r.x));
         
@@ -34,7 +34,7 @@ void main() {
     // does not work too well, because it is clipping with the noise  
     // for the current time, and it should calculate a new
     // pulse based on the time offset of the last ghost line
-    v *= fill(r.y - 1. - pulse , true); 
+    v *= fill(r.y - 1.5 - pulse , true); 
 
     // clip borders
     v *= stroke(r.x,1.5, true);
