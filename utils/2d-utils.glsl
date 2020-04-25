@@ -14,8 +14,23 @@ float hex(vec2 r, float radius) { return max(abs(r.y), dot(abs(r),vec2(0.866,.5)
 // generic 'n' side polygon, contained in the circle of radius
 float poly(vec2 r, float radius, float n) {  return length(r) * cos(mod(atan(r.y, r.x) - 1.57, 6.28 / n) - (3.14 / n)) - radius; }
 
-// define a angular pattern of rays around the reference frame. 
+// define sdf for angular pattern of rays around the reference frame. 
 float rays(vec2 r, float n) { return mod(atan(r.y,r.x), 6.283 / n ) - (3.14 / n); }
+
+// sdf for a spiral
+// https://swiftcoder.wordpress.com/2010/06/21/logarithmic-spiral-distance-field/
+// accepts rge reference frame and the rotating factor [0.,1.]
+float spiral(vec2 r, float b) {
+    float l = length(r);
+    float a = atan(r.y,r.x);
+    
+    float n = l != 0. ? ((log(l)/b) - a) / 6.283 : 0.;
+    
+    float l1 = exp( b * (a + floor(n) * 6.284));
+    float l2 = exp( b * (a + ceil(n) * 6.284));
+    
+    return min( abs(l1 - l), abs(l2 - l) ) ;
+}
 
 // 2d rotation matrix 
 mat2 rot(float a) { float c = cos(a); float s = sin(a); return mat2(c,-s,s,c); }
@@ -23,7 +38,7 @@ mat2 rot(float a) { float c = cos(a); float s = sin(a); return mat2(c,-s,s,c); }
 // returns the reference frame in modular polar form, with a start angle
 vec2 modpolar(vec2 r, float n, float start) { float angle = atan(r.y,r.x) - start; return r * rot( mod(angle, 6.283 / n) - angle); }
 
-// a 'fold' is a kind of generic abs(). 
+// a 'fold' is a symmetry along a line. 
 // it reflects half of the plane in the other half
 // the variable 'a' represents the angle of an axis going through the origin
 // so in normalized coordinates uv [-1,1] 
