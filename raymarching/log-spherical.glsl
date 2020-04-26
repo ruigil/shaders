@@ -4,6 +4,7 @@
 #include '../utils/3d-utils.glsl'
 
 // a grid in a log-spherical mapping transform of the coordinates.
+// from : https://www.osar.fr/notes/logspherical/
 float grid(vec3 p) {
     float l = length(p);
     float scale = 6./3.1415;
