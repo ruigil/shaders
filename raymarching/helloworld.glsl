@@ -22,12 +22,19 @@ float scene(vec3 p) {
 vec3 trace(vec3 ro, vec3 rd) {
     float t , d = 0.;
 
+    // initialize the point that is going to march along the ray
+    vec3 p = ro;
     for (int i=0; i< 100; i++) {
-        d = scene( ro + rd * t );
-        if (abs(d) < .001) break; 
-        t += d;
+        // calculate the actual distance
+        d = scene( p );
+        // if we hit something break, the loop
+        if (abs(d) < .001) break;
+        // march along the ray 
+        p = ro + rd * (t += d);
     }
-    return ro + rd * t;
+    
+    // return the hist point
+    return p;
 }
 
 // sampling the distance field, to get differences in the 3 axis,  
@@ -40,14 +47,19 @@ vec3 getNormal(in vec3 p) {
 // defining materials
 Material material(vec3 hit) {
     float e = .001;
-    Material m = Material(vec3(0.4,.1,.0), vec3(0.6,.4,.0), vec3(1.), 1.);
+    vec3 normal = getNormal(hit);
 
+    // initialize a default material for the boundary
+    Material m = Material(vec3(0.4,.1,.0), vec3(0.6,.4,.0), vec3(1.), 1., normal);
+
+    // the material for the box
     if (boxhole(hit) < e) {
         float x = mod(floor(hit.y)+floor(hit.x)+floor(hit.z), 2.);
         m.diffuse = vec3(1.) * floor(x);
         m.ambient = m.diffuse * .5;        
     }
 
+    // the material for the spheres
     if (runsphere(hit) < e) {
         m.diffuse = vec3(.1,.4,.6);
         m.ambient = m.diffuse * .5;
@@ -61,8 +73,6 @@ Material material(vec3 hit) {
 // using materials to apply a ligh model
 vec3 shade(vec3 eye, vec3 hit) {
 
-    vec3 normal = getNormal(hit.xyz);
-
     Material m = material(hit);
 
     // light position;
@@ -73,13 +83,12 @@ vec3 shade(vec3 eye, vec3 hit) {
     vec3 ld = normalize(lp - hit);
     
     // diffuse component is dot product between light direction and normal
-    float diff = max( dot( ld, normal), 0. );
+    float diff = max( dot( ld, m.normal), 0. );
     // specular component is dot product bewtween light reflected and view direction
-    float spec = max( dot( normalize( reflect(-ld, normal ) ), normalize(eye - hit) ), 0.);
+    float spec = max( dot( normalize( reflect(-ld, m.normal ) ), normalize(eye - hit) ), 0.);
 
     // ambient color + light intensity * ( diffuse color * diffuse light + specular color * specular light)
     return m.ambient + li * ( (m.diffuse * diff) + (m.specular * pow( spec ,m.alpha) ) );
-
 }
 
 void main() {
@@ -87,10 +96,14 @@ void main() {
     float ct = cos(iTime);
     float st = sin(iTime);
 
-    vec3 eye =  vec3(ct, 0., st) * 1.5; 
+    // the eye position
+    vec3 eye =  vec3(ct, 0., st) * 1.5;
+    // the ray shot from the camera 
     vec3 ray = setCamera(ref, eye, vec3(0.), radians(90.)  );
 
+    // we trace the ray, and shade the hit point to the eye
     vec3 color = shade(eye, trace(eye, ray) );
 
+    // gamma color correction
     oPixel = vec4( gamma(color,1.2) ,1.);   
 }

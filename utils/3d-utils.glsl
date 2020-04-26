@@ -4,6 +4,7 @@ struct Material {
     vec3 diffuse;
     vec3 specular;
     float alpha;
+    vec3 normal;
 };
 
 // a signed distance function for a sphere
