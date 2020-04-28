@@ -18,13 +18,11 @@ void main() {
 
     // the reference frame is between [-1,1] * size
     vec2 r = ref * size;
-    // the texture reference frame is between [0,1] * size
-    vec2 t = tex * size;
 
     float tt = mod(floor(iTime*60.), 30.);
 
     // initialize the output value with the previous frame
-    float f = texture(iChannel0,t / size).r; 
+    float f = texture(iChannel0, tex).r; 
 
     // the reference frame is deformed with noise
     r +=  vec2(.0, tt - 15. + noise( vec2(tt + r.x*3., tt )) );
