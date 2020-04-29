@@ -5,6 +5,9 @@
 #include '../utils/complex-math.glsl'
 #include '../utils/noise.glsl'
 
+float teeth(vec2 r, float n, float a) {
+    return stroke(circle(r,.4), .3, .01, true) * fill(rays(r * rot(a), 10.), .01, false);
+}
 
 void main() {
 
@@ -24,17 +27,23 @@ void main() {
     r = zdiv( zadd( z, 2. * vec2(ct,st) ), zsub( z, 2.*vec2(st, ct)));
 
     // we apply a log scale
-    r = vec2(log(r.x) - iTime, r.y + st );
+    r = vec2(log(r.x) - iTime*.5, r.y );
     r *= scale;
 
     // we repeat the space
+    float s = sign(mod(floor(r.y)+floor(r.x),2.)-.5);
     r = fract(r)-.5;
 
+    float step = 6.283/10.;
+    float t = iTime;
     // and draw the pattern
     float f = 
-        stroke(scale * circle(r,.3), .1, true) *
-        fill(scale * rays(r * rot(-radians(iTime * 60.)), 10.), true) +
-        stroke(scale * circle(r,.21), .2, true);      
+        teeth(r, 10., s*t) +
+        teeth(vec2(r.x-1.,r.y), 10.,s*-t+step) +
+        teeth(vec2(r.x+1.,r.y), 10.,s*-t+step) +
+        teeth(vec2(r.x,r.y-1.), 10.,s*-t+step) +
+        teeth(vec2(r.x,r.y+1.), 10.,s*-t+step) +
+        stroke(circle(r,.31), .15, .01, true);      
 
     oPixel = vec4(vec3(f),1.);
 }
