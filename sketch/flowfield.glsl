@@ -1,8 +1,15 @@
 #define oPixel gl_FragColor
 #define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+#define tex (gl_FragCoord.xy/iResolution.xy)
+
 
 #include '../utils/2d-utils.glsl'
 #include '../utils/noise.glsl'
+
+#iChannel0::MagFilter "Linear"
+#iChannel0::WrapMode "Repeat"
+#iChannel0 "self"
+
 
 void main() {
 
@@ -14,28 +21,17 @@ void main() {
     // here a flowfield is contructed interpreting the value noise
     // between [0,1] to be an angle for the direction
 
-    vec2 r = ref*10.;
+    vec2 r = ref;
 
-    vec2 nr = r;
+    // we create a flowfield
+    vec2 ff = vec2(.0,.005)*rot(radians(noise(vec3(r, iTime*.1)) * 360.) ); 
 
-    // the grid resolution of the flowfield
-    vec2 fl = floor(r); 
-    vec2 fr = fract(r) - .5;
-
-    // drawing the grid
-    float f = stroke(rect(fr, vec2(1.)), .05, true);
-    // value noise
-    float n = noise(vec3(fl/5.,iTime)); 
-
-    // painting the square
-    f += n;  
-
-    // the value is interpreted as an angle
-    fr *= rot(radians( n * 360.));
+    // we use the vector field to sample the texture feedback
+    // and do a texture advection
+    float t = texture(iChannel0,fract(tex+ff)).r-.04;
     
-    // draw the arrow
-    f += stroke(fr.y,.1,true) * stroke(fr.x,.5,true) + fill(circle(fr+vec2(.25,.0),.1),true);
-
+    // we use another noise field to add some white points as sources
+    float f = max(t,step(noise(vec3(r*55.,iTime*2.)),.1));
 
     oPixel = vec4(vec3(f),1.);   
 }
