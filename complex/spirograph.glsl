@@ -10,9 +10,7 @@
 
 void main() {
     
-    vec2 r = ref*3.+4.;
-
-    int n = 5;
+    vec2 r = ref*3.;
 
     vec2 fl = floor(r);
     r = fract(r)-.5;
@@ -24,15 +22,15 @@ void main() {
     // we can draw anything
     vec3 fos[4] = vec3[4](
         vec3(.1*hash(fl.xx), 3.,hash(fl.yy)*3.),
-        vec3(.05*hash(fl.xy), -15.,hash(fl.yx)*3.),
-        vec3(.15*hash(fl.yx), -11.,hash(fl.xy)*3.),
+        vec3(.05*hash(fl.xy), -11.,hash(fl.yx)*3.),
+        vec3(.15*hash(fl.yx), -7.,hash(fl.xy)*3.),
         vec3(.2*hash(fl.yy), 5.,hash(fl.xx)*3.)
     );
     
     // frame feedback
     float f = texture(iChannel0, tex ).r; 
 
-    float t = iTime/6.238;
+    float t = iTime*.1;
 
     // calculate the parametric curve
     for (int i=0; i<fos.length(); i++) 
