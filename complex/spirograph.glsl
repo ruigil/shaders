@@ -19,12 +19,14 @@ void main() {
     // the fourier serie of oscilators
     // we model a fourier series as an array of vec3
     // x = amplitude, y = frequency, z = phase;
-    // by selecting the proper coefficients we can draw anything
+    // here we select random coefficients, but by selecting
+    // proper coefficients with a discrete fourier transform
+    // we can draw anything
     vec3 fos[4] = vec3[4](
-        vec3(.15*hash(fl.xx), 3.,hash(fl.yy)*3.),
-        vec3(.1*hash(fl.xy), -15.,hash(fl.yx)*3.),
-        vec3(.1*hash(fl.yx), -11.,hash(fl.xy)*3.),
-        vec3(.15*hash(fl.yy), 5.,hash(fl.xx)*3.)
+        vec3(.1*hash(fl.xx), 3.,hash(fl.yy)*3.),
+        vec3(.05*hash(fl.xy), -15.,hash(fl.yx)*3.),
+        vec3(.15*hash(fl.yx), -11.,hash(fl.xy)*3.),
+        vec3(.2*hash(fl.yy), 5.,hash(fl.xx)*3.)
     );
     
     // frame feedback
