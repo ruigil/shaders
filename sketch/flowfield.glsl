@@ -13,21 +13,21 @@
 
 void main() {
 
-    // a flow field is a space where each point is interpreted as a
-    // direction, or vector. This means that particles or objects
-    // in the flowfield will move acordingly to the local values of
-    // the field
+    // a flow field is a vector field where each point is 
+    // interpreted as a direction for movement or flow. 
+    // This means that particles or objects the flowfield 
+    // will move acordingly to the local values of vector field
 
     // here a flowfield is contructed interpreting the value noise
     // between [0,1] to be an angle for the direction
 
     vec2 r = ref;
 
-    // we create a flowfield
+    // we create a vector field
     vec2 ff = vec2(.0,.005)*rot(radians(noise(vec3(r, iTime*.1)) * 360.) ); 
 
     // we use the vector field to sample the texture feedback
-    // and do a texture advection
+    // and do a texture advection to generate flow
     float t = texture(iChannel0,fract(tex+ff)).r-.04;
     
     // we use another noise field to add some white points as sources
