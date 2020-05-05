@@ -5,6 +5,12 @@ struct Material {
     vec3 specular;
     float alpha;
     vec3 normal;
+    vec3 albedo;
+};
+
+struct Ray {
+    vec3 ori;
+    vec3 dir;
 };
 
 // a signed distance function for a sphere
@@ -36,10 +42,10 @@ mat3 rot3(vec3 angle) {
 // return the ray direction
 vec3 setCamera(vec2 screen, vec3 eye, vec3 lookAt, float fov) {
     vec3 up = vec3(0.,1.,0.);
-    vec3 fw = normalize(lookAt - eye);
+    vec3 fw = normalize(eye - lookAt);
 	vec3 rg = normalize( cross(fw, up) );
 	up = cross(rg, fw);   
-    vec3 ray = normalize(vec3(screen * tan(fov/2.), 1.)); 
+    vec3 ray = normalize(vec3(screen * tan(fov/2.), -1.)); 
 
     return ray * mat3(rg, up, fw); 
 }
