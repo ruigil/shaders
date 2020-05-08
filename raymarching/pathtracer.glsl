@@ -4,18 +4,18 @@
 #include '../utils/3d-utils.glsl'
 #include '../utils/noise.glsl'
 
-// the green
-float greens(vec3 p) {
+// the metal
+float metal(vec3 p) {
     return sphere(p - vec3(0.7,0.,.0), .3);
 }
 
-// the red
-float reds(vec3 p) {
+// the matte object
+float matte(vec3 p) {
     return sphere(p - vec3(0.,0.,.0), .3);
 }
 
-// the blue
-float blues(vec3 p) {
+// the glass sphere
+float glass(vec3 p) {
     return sphere(p - vec3(-0.7,0.,.0), .3);
 }
 
@@ -25,7 +25,7 @@ float floorplane(vec3 p) {
 
 // the scene with a big bounding sphere 
 float scene(vec3 p) {
-    return min(min(floorplane(p), min( min( greens(p),reds(p) ), blues(p) )),-sphere(p,5.) );
+    return min(min(floorplane(p), min( min( metal(p), matte(p) ), glass(p) )),-sphere(p,5.) );
 }
 
 // trace a ray into the scene, return the hit point, and the distance
@@ -54,12 +54,6 @@ vec3 getNormal(in vec3 p) {
 	return normalize(vec3( scene(p + e.xyy) - scene(p - e.xyy), scene(p + e.yxy) - scene(p - e.yxy), scene(p + e.yyx) - scene(p - e.yyx)));
 }
 
-vec3 newray() {
-    float a = hash(iTime) * 6.283;
-    float z = (hash(iTime*3.)*2.) - 1.;
-    float r = sqrt(1. - z*z);
-    return vec3(r*cos(a), r*sin(a), z);
-}
 
 // defining materials
 Material material(Ray ray, inout Hit hit) {
@@ -67,32 +61,46 @@ Material material(Ray ray, inout Hit hit) {
     vec3 normal = getNormal(hit.p);
     Material m = Material(vec3(0.), normal, false, normal);
 
-    m.albedo = mix(vec3(1.,1.,.0),vec3(0.4,0.3,1.), hit.p.y);
+    m.albedo = mix(vec3(.9,.6,.1),vec3(0.4,0.3,8.), (hit.p.y+.5)*.6);
 
     if (floorplane(hit.p) < e) {
-        hit.p *= 5.;
+        hit.p *= 3.;
         float x = mod(floor(hit.p.y)+floor(hit.p.x)+floor(hit.p.z), 2.);
-        //x = noise(hit.p.xz*2.);
         m.albedo = vec3(1.) * floor(x);
     }
 
-    if (reds(hit.p) < e) {
+    if (matte(hit.p) < e) {
         m.albedo = vec3(0.2,1.0,.2);
     }
 
-    if (greens(hit.p) < e) {
+    if (metal(hit.p) < e) {
         m.albedo = vec3(1.,.2,.2) ;
         m.scatter = true;
         m.scattered = normalize(reflect(ray.dir,normal));
         hit.p = ray.ori + ray.dir * (hit.d*.99);
     }
 
-    if (blues(hit.p) < e) {
+    if (glass(hit.p) < e) {
         m.albedo = vec3(1.,1.,1.0);
         m.scatter = true;
-        float sn = hit.s>0. ? 1./1.52 : 1.52;
-        m.scattered = normalize(refract(ray.dir,hit.s*normal,sn));
-        hit.p = ray.ori + ray.dir * (hit.d*1.01);
+        float ctheta = min(dot(-ray.dir,normal),1.0);
+        float stheta = sqrt(1. - ctheta*ctheta);
+        
+        // schlick approximation for the refractive index
+        // 1.52 for the common glass
+        float sn = hit.s>0. ? 1./1.52 : 1.52/1.;
+        sn = (1.-sn) / (1.+sn);
+        sn = sn*sn;
+        sn + (1.-sn)*pow( (1. - ctheta),5.);
+        
+        // test if the ray is reflected or refracted
+        if (sn * stheta  > 1. ) {
+            m.scattered = normalize(reflect(ray.dir,normal));
+            hit.p = ray.ori + ray.dir * (hit.d*.99);
+        } else {
+            m.scattered = normalize(refract(ray.dir,hit.s*normal,sn));
+            hit.p = ray.ori + ray.dir * (hit.d*1.01);
+        }
     }
 
     return m;
@@ -139,7 +147,7 @@ vec3 antialias(vec2 r) {
     float ct = cos(iTime);
     float st = sin(iTime);
 
-    vec3 eye =  vec3(0., .1,-1.) * 2.;
+    vec3 eye =  vec3(ct, .5,-1.) * 2.;
     vec2 e = vec2(1./iResolution);
     vec3 color = vec3(0.);
     float fov = radians(70.);
