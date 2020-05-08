@@ -11,7 +11,7 @@ float grid(vec3 p) {
     p = vec3(log(l), acos(p.z/length(p)), atan(p.y,p.x));
     p *= scale;
     p = fract(p+.5)-.5;
-      
+    
     vec3 size = vec3(1.);
     return (l/scale)*max(box(p, size ), max(max(-box(p.yyz, size ),-box(p.xxy, size ) ), -box(p.xxz, size ) )-.05 );
 }
@@ -52,13 +52,10 @@ Material material(vec3 hit) {
     float e = .001;
     vec3 normal = getNormal(hit);
 
-    Material m = Material(vec3(0.1), vec3(.2), vec3(0.), 1., normal);
+    Material m = Material(vec3(0.), normal, false, normal);
 
     if (grid(hit) < e) {
-        m.diffuse = vec3(1.);
-        m.ambient = m.diffuse * .5; 
-        m.specular = vec3(1.0);
-        m.alpha = 3.0;  
+        m.albedo = vec3(1.);
     }
 
     return m;
@@ -83,7 +80,7 @@ vec3 shade(vec3 eye, vec3 hit) {
     float spec = max( dot( normalize( reflect(-ld, m.normal ) ), normalize(eye - hit) ), 0.);
 
     // ambient color + light intensity * ( diffuse color * diffuse light + specular color * specular light)
-    return m.ambient + li * ( (m.diffuse * diff) + (m.specular * pow( spec ,m.alpha) ) );
+    return m.albedo*.5 + li *  ((m.albedo * diff) + ( pow(spec,16.) ));
 
 }
 
@@ -92,7 +89,7 @@ void main() {
     float ct = cos(iTime*.1);
     float st = sin(iTime*.1);
 
-    vec3 eye =  vec3(ct, 0.5, st) * 1.5; 
+    vec3 eye =  vec3(ct, .0, st) * 2.; 
     vec3 ray = setCamera(ref, eye, vec3(0.), radians(90.)  );
 
     vec3 color = shade(eye, trace(eye, ray) );
