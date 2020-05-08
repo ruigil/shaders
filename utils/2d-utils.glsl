@@ -76,3 +76,5 @@ float losc(float v) { v+= .25; return 2.* (abs(floor(mod(v*2.,2.)) - fract(v*2.)
 
 // sin oscilator, gives a sine wave with v period 1. 
 float sosc(float v) { return  sin(v/6.238); }
+
+
