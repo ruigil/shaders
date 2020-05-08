@@ -28,8 +28,8 @@ float scene(vec3 p) {
     return min(min(floorplane(p),min(min(greens(p),reds(p)),blues(p))),-sphere(p,5.) );
 }
 
-// trace a ray into the scene, return the hit point
-vec3 trace(Ray ray) {
+// trace a ray into the scene, return the hit point, and the distance
+vec4 trace(Ray ray) {
     float t , d = 0.;
 
     // initialize the point that is going to march along the ray
@@ -43,8 +43,8 @@ vec3 trace(Ray ray) {
          p = ray.ori + ray.dir * (t += d);
     }
     
-    // return the hist point
-    return p;
+    // return the hit point and total distance
+    return vec4(p,t);
 }
 
 // sampling the distance field, to get differences in the 3 axis,  
@@ -62,40 +62,34 @@ vec3 newray() {
 }
 
 // defining materials
-Material material(Ray ray, vec3 hit) {
+Material material(Ray ray, vec4 hit) {
     float e = .001;
-    vec3 normal = getNormal(hit);
-    Material m = Material(vec3(.1), vec3(0.), vec3(0.), 1., getNormal(hit), vec3(0.) );
+    vec3 normal = getNormal(hit.xyz);
+    Material m = Material(vec3(0.), normal, false, normal);
 
+    m.albedo = mix(vec3(1.,1.,.0),vec3(0.4,0.3,1.), hit.y);
 
-    if (floorplane(hit) < e) {
+    if (floorplane(hit.xyz) < e) {
         hit *= 5.;
         float x = mod(floor(hit.y)+floor(hit.x)+floor(hit.z), 2.);
-        m.diffuse = vec3(1.) * floor(x);
-        m.ambient = m.diffuse * .5;        
-        m.specular = vec3(.5);
-        m.alpha = 16.;
+        m.albedo = vec3(1.) * floor(x);
+        m.scatter = false;
     }
 
-    if (reds(hit) < e) {
-        m.diffuse = vec3(1.,.0,.0) ;
-        m.ambient = m.diffuse * .3;        
-        m.specular = vec3(.5);
-        m.alpha = 16.;
+    if (reds(hit.xyz) < e) {
+        m.albedo = vec3(1.,.2,.2) ;
+        m.scatter = true;
+        m.scattered = normalize(reflect(ray.dir,normal));
     }
 
-    if (greens(hit) < e) {
-        m.diffuse = vec3(0.,1.0,.0);
-        m.ambient = m.diffuse * .3;        
-        m.specular = vec3(.5);
-        m.alpha = 16.;
+    if (greens(hit.xyz) < e) {
+        m.albedo = vec3(0.2,1.0,.2);
+        m.scatter = false;
     }
 
-    if (blues(hit) < e) {
-        m.diffuse = vec3(0.,.0,1.0) ;
-        m.ambient = m.diffuse * .3;        
-        m.specular = vec3(.5);
-        m.alpha = 16.;
+    if (blues(hit.xyz) < e) {
+        m.albedo = vec3(0.2,.2,1.0);
+        m.scatter = false;
     }
 
     return m;
@@ -104,10 +98,7 @@ Material material(Ray ray, vec3 hit) {
 
 // using materials to apply a ligh model
 vec3 shade(Ray ray, int depth) {
-    vec3 color = vec3(.0);
-
-
-    //vec3 hit = vec3(0.);
+    vec3 color = vec3(1.0);
 
 
     // light position;
@@ -118,20 +109,24 @@ vec3 shade(Ray ray, int depth) {
 
     for (int i=0; i<depth; i++) {
 
-        vec3 hit = trace(ray);
+        vec4 hit = trace(ray);
         // material
         Material m = material(ray, hit);
- 
+
         // light direction
-        vec3 ld = normalize(lp - hit);
+        //vec3 ld = normalize(lp - hit.xyz);
         
         // diffuse component is dot product between light direction and normal
-        float diff = max( dot( ld, m.normal), 0. );
+        //float diff = max( dot( ld, m.normal), 0. );
         // specular component is dot product bewtween light reflected and view direction
-        float spec = max( dot( normalize( reflect(-ld, m.normal ) ), normalize(ray.ori - hit) ), 0.);
+        //float spec = max( dot( normalize( reflect(-ld, m.normal ) ), normalize(ray.ori - hit.xyz) ), 0.);
 
         // ambient color + light intensity * ( diffuse color * diffuse light + specular color * specular light)
-        color += m.ambient + li * ( (m.diffuse * diff) + (m.specular * pow( spec ,m.alpha) ) );
+        // color += m.ambient + li * ( (m.diffuse * diff) + (m.specular * pow( spec ,m.alpha) ) );
+
+        color *= m.albedo;
+        if (!m.scatter) break;
+        ray = Ray(ray.ori + ray.dir * (hit.w*.99), m.scattered);
     }
 
     return color; 
@@ -141,13 +136,13 @@ vec3 antialias(vec2 r) {
     float ct = cos(iTime);
     float st = sin(iTime);
 
-    vec3 eye =  vec3(.0, .5,-1.) * 2.;
+    vec3 eye =  vec3(ct, .5,-1.) * 2.;
     vec2 e = vec2(1./iResolution);
     vec3 color = vec3(0.);
     float fov = radians(70.);
  
     Ray ray = Ray(eye, setCamera(ref, eye, vec3(0.), fov  ));
-    color += shade(ray,1);
+    color += shade(ray,2);
 
     //ray = Ray(eye , setCamera(ref - e.xy, eye, vec3(0.), fov  ));
     //color += shade(ray,1);
