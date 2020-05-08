@@ -73,7 +73,6 @@ Material material(Ray ray, vec4 hit) {
         hit *= 5.;
         float x = mod(floor(hit.y)+floor(hit.x)+floor(hit.z), 2.);
         m.albedo = vec3(1.) * floor(x);
-        m.scatter = false;
     }
 
     if (reds(hit.xyz) < e) {
@@ -84,12 +83,10 @@ Material material(Ray ray, vec4 hit) {
 
     if (greens(hit.xyz) < e) {
         m.albedo = vec3(0.2,1.0,.2);
-        m.scatter = false;
     }
 
     if (blues(hit.xyz) < e) {
         m.albedo = vec3(0.2,.2,1.0);
-        m.scatter = false;
     }
 
     return m;
