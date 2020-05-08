@@ -1,11 +1,9 @@
 // a struct for materials
 struct Material {
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-    float alpha;
-    vec3 normal;
     vec3 albedo;
+    vec3 normal;
+    bool scatter;
+    vec3 scattered;
 };
 
 struct Ray {
