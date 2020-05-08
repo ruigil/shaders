@@ -25,11 +25,11 @@ float floorplane(vec3 p) {
 
 // the scene with a big bounding sphere 
 float scene(vec3 p) {
-    return min(min(floorplane(p),min(min(greens(p),reds(p)),blues(p))),-sphere(p,5.) );
+    return min(min(floorplane(p), min( min( greens(p),reds(p) ), blues(p) )),-sphere(p,5.) );
 }
 
 // trace a ray into the scene, return the hit point, and the distance
-vec4 trace(Ray ray) {
+Hit trace(Ray ray) {
     float t , d = 0.;
 
     // initialize the point that is going to march along the ray
@@ -40,11 +40,11 @@ vec4 trace(Ray ray) {
         // if we hit something break, the loop
         if (abs(d) < .001) break;
         // march along the ray 
-         p = ray.ori + ray.dir * (t += d);
+         p = ray.ori + ray.dir * (t += abs(d));
     }
     
-    // return the hit point and total distance
-    return vec4(p,t);
+    // return the hit point and total distance, and the sign of the field
+    return Hit(p, t, sign(d) );
 }
 
 // sampling the distance field, to get differences in the 3 axis,  
@@ -62,31 +62,37 @@ vec3 newray() {
 }
 
 // defining materials
-Material material(Ray ray, vec4 hit) {
+Material material(Ray ray, inout Hit hit) {
     float e = .001;
-    vec3 normal = getNormal(hit.xyz);
+    vec3 normal = getNormal(hit.p);
     Material m = Material(vec3(0.), normal, false, normal);
 
-    m.albedo = mix(vec3(1.,1.,.0),vec3(0.4,0.3,1.), hit.y);
+    m.albedo = mix(vec3(1.,1.,.0),vec3(0.4,0.3,1.), hit.p.y);
 
-    if (floorplane(hit.xyz) < e) {
-        hit *= 5.;
-        float x = mod(floor(hit.y)+floor(hit.x)+floor(hit.z), 2.);
+    if (floorplane(hit.p) < e) {
+        hit.p *= 5.;
+        float x = mod(floor(hit.p.y)+floor(hit.p.x)+floor(hit.p.z), 2.);
+        //x = noise(hit.p.xz*2.);
         m.albedo = vec3(1.) * floor(x);
     }
 
-    if (reds(hit.xyz) < e) {
-        m.albedo = vec3(1.,.2,.2) ;
-        m.scatter = true;
-        m.scattered = normalize(reflect(ray.dir,normal));
-    }
-
-    if (greens(hit.xyz) < e) {
+    if (reds(hit.p) < e) {
         m.albedo = vec3(0.2,1.0,.2);
     }
 
-    if (blues(hit.xyz) < e) {
-        m.albedo = vec3(0.2,.2,1.0);
+    if (greens(hit.p) < e) {
+        m.albedo = vec3(1.,.2,.2) ;
+        m.scatter = true;
+        m.scattered = normalize(reflect(ray.dir,normal));
+        hit.p = ray.ori + ray.dir * (hit.d*.99);
+    }
+
+    if (blues(hit.p) < e) {
+        m.albedo = vec3(1.,1.,1.0);
+        m.scatter = true;
+        float sn = hit.s>0. ? 1./1.52 : 1.52;
+        m.scattered = normalize(refract(ray.dir,hit.s*normal,sn));
+        hit.p = ray.ori + ray.dir * (hit.d*1.01);
     }
 
     return m;
@@ -106,7 +112,7 @@ vec3 shade(Ray ray, int depth) {
 
     for (int i=0; i<depth; i++) {
 
-        vec4 hit = trace(ray);
+        Hit hit = trace(ray);
         // material
         Material m = material(ray, hit);
 
@@ -123,7 +129,7 @@ vec3 shade(Ray ray, int depth) {
 
         color *= m.albedo;
         if (!m.scatter) break;
-        ray = Ray(ray.ori + ray.dir * (hit.w*.99), m.scattered);
+        ray = Ray(hit.p, m.scattered);
     }
 
     return color; 
@@ -133,13 +139,13 @@ vec3 antialias(vec2 r) {
     float ct = cos(iTime);
     float st = sin(iTime);
 
-    vec3 eye =  vec3(ct, .5,-1.) * 2.;
+    vec3 eye =  vec3(0., .1,-1.) * 2.;
     vec2 e = vec2(1./iResolution);
     vec3 color = vec3(0.);
     float fov = radians(70.);
  
     Ray ray = Ray(eye, setCamera(ref, eye, vec3(0.), fov  ));
-    color += shade(ray,2);
+    color += shade(ray,3);
 
     //ray = Ray(eye , setCamera(ref - e.xy, eye, vec3(0.), fov  ));
     //color += shade(ray,1);
