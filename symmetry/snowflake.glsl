@@ -1,7 +1,6 @@
 #define oPixel gl_FragColor
 #define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
 
-#include '../animation/easing-functions.glsl'
 #include '../utils/2d-utils.glsl'
 
 // this functions 'folds' space with the symmetries of the Koch Snowflake
@@ -76,6 +75,18 @@ float branches(vec2 r, int level) {
     return f;
 }
 
+vec2 stripes(vec2 r, float level) {
+    
+    vec2 rt = r;
+    for (float f=0.; f< level; f++) {
+        rt = vec2(abs(rt.x), rt.y ) * rot(radians(-60.));
+        rt = vec2(rt.x,fract(rt.y + .5)-.5);
+        rt *= rot(radians(90.));
+    }
+
+    return rt;
+}
+
 void main() {
     
     vec2 r = ref*4.;
@@ -85,47 +96,36 @@ void main() {
 
     //r = vec2(r.x, abs(r.y));
     vec2 sr = r;//fold(r, radians(180.)) ;
-    //sr = vec2(sr.x,abs(sr.y));
-    //sr = fold(sr, radians(120.)) ;
-    //sr = fold(sr, radians(-120.));
+    sr = vec2(sr.x,abs(sr.y));
+    sr = fold(sr, radians(120.)) ;
+    sr = fold(sr, radians(-120.));
     //sr = vec2(abs(sr.x),sr.y);  
   
     //float f = branches(vec2(sr.x,sr.y),1);
-    float f = fill(rect(r,vec2(.5,8.)), true);
-
-
-    //f = stroke(hex(sr-vec2(.0,.6),.3),.1,true);
-    vec2 r0 = vec2(abs(r.x),r.y)*.5*rot(radians(-60.));
-    r0 = vec2(r0.x,fract(r0.y+.5)-.5);
-    vec2 r1 = r0*1.*rot(radians(90.));    
-    r1 = vec2(abs(r1.x),r1.y)*rot(radians(-60.));
-    //r1 = vec2(fract(r1.x+.5)-.5,fract(r1.y+.5)-.5);
-    r1 = vec2(r1.x,fract(r1.y+.5)-.5);    
-    //f += stroke(rect(sr-vec2(.0,.6),vec2(.1)),.05,true);
-    //f+= stroke( dot(r,vec2(cos(radians(-30.)),sin(radians(-30.)))), .01, true); 
-    //f+= stroke( dot(r,vec2(cos(radians(-150.)),sin(radians(-150.)))), .01, true); 
-    //f+= stroke( dot(r,vec2(cos(radians(-90.)),sin(radians(-90.)))), .01, true); 
-
-    f = max(f,fill(rect(r0,vec2(13.,.25)),true));
-    //f *= fill(tri(-r/5.),true);
-    //f = max(f,);
+    float f = fill(rect(sr+vec2(0.,4.),vec2(.3,12.)), true);
     float g = 0.;//stroke(rect(r0,vec2(15.,3.)),.05,true);
     float b = 0.;//stroke(rect(r1,vec2(15.,1.)),.05,true);
-    b = fill(rect(r1,vec2(1.,.3)),true);
+
+    //f = stroke(hex(sr-vec2(.0,.6),.3),.1,true);
+    vec2 r0 = vec2(abs(r.x),sr.y)*rot(radians(-60.));
+    r0 = vec2(r0.x,fract(r0.y)-.5);
+    f = max(f,fill(rect(r0,vec2(6.,.25)),true));
+    
+    vec2 r1 = r0 * rot(radians(90.));    
+    r1 = vec2(abs(r1.x),r1.y)*rot(radians(-60.));
+    r1 = vec2(r1.x,fract(r1.y)-.5);    
+    f = max(f,fill(rect(r1,vec2(7.,.25)),true));
+    
+    //g += stroke(rect(sr-vec2(.0,.6),vec2(.1)),.05,true);
+    //g += stroke( dot(r,vec2(cos(radians(-30.)),sin(radians(-30.)))), .01, true); 
+    //g += stroke( dot(r,vec2(cos(radians(-150.)),sin(radians(-150.)))), .01, true); 
+    //g += stroke( dot(r,vec2(cos(radians(-90.)),sin(radians(-90.)))), .01, true); 
+
+    //b = fill(rect(r1,vec2(11.,.3)),true);
     g = stroke(tri(-r/5.),.01,true);
     //b *= fill(tri(-r/5.),true);
-    bool c = sr == r;
-/*
-    sr = refKochSnowflake(sr*1.,1)-vec2(.1,.2);
-    f += stroke(circle(sr, .1),.03,true);
 
-    sr = refKochSnowflake(sr*rot(radians(-20.))*2.,1)-vec2(.0,.6);
-    f += stroke(rect(sr, vec2(.5,.6)),.05,true);
-
-    mat2 rt = rot(radians(45.));
-*/
-
-    oPixel = vec4(vec3(f,g,b),1.);
+    oPixel = vec4(vec3(f,g,f),1.);
 }
 
 

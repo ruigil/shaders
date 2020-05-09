@@ -5,7 +5,7 @@
 #include '../utils/noise.glsl'
 
 
-
+// good
 float lineseg(vec2 r, vec2 a, vec2 b) {
     vec2 ra = r-a, ba = b-a;
     float h = clamp( dot(ra,ba)/dot(ba,ba), 0.0, 1.0 );
