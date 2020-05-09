@@ -36,7 +36,8 @@ vec3 trace(vec3 ro, vec3 rd) {
         p = ro + rd * (t += d);
     }
 
-    // return the hit point
+    // return the hit point 
+    //
     return p;
 }
 
