@@ -4,7 +4,7 @@
 #include '../utils/2d-utils.glsl'
 
 void main() {
-    vec2 r = ref * 1.;
+    vec2 r = ref * 7.;
 
     // create tiles and every other tile rotate the pattern 90 degrees
     r = mod(floor(r.x) + floor(r.y) , 2.) == 0. ? 
