@@ -170,5 +170,5 @@ void main() {
     vec3 color = antialias(ref); 
 
     // gamma color correction
-    oPixel = vec4( gamma(color,1.2) ,1.);   
+    oPixel = vec4( gamma(color,2.2) ,1.);   
 }

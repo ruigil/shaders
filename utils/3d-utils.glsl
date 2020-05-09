@@ -6,10 +6,19 @@ struct Material {
     vec3 scattered;
 };
 
+// a struct for a ray
 struct Ray {
     vec3 ori;
     vec3 dir;
 };
+
+// a struct for a hit
+struct Hit {
+    vec3 p; // hit point
+    float d; // hit distance
+    float s; // distance field sign
+};
+
 
 // a signed distance function for a sphere
 float sphere(vec3 p, float radius) { return length(p) - radius; }
@@ -49,5 +58,5 @@ vec3 setCamera(vec2 screen, vec3 eye, vec3 lookAt, float fov) {
 }
 
 // gama correction
-vec3 gamma(vec3 color, float p) { return pow(color,vec3(p)); }
+vec3 gamma(vec3 color, float p) { return pow(color,vec3( 1. / p)); }
 
