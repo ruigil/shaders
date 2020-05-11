@@ -17,19 +17,20 @@ void main() {
     // and texture
 
     // Try playing with your mouse !
-    
-     
+
+    // reference frame   
     vec2 r = ref;
-    
+    // epsilon for differences
     vec3 e = vec3(1./iResolution.xy, 0.);
 
     // get the current values for the heighmap of the water simulation
     // get the also the differences to normal and water distortion
     float t = texture(iChannel0,tex).x;
-    float tx = texture(iChannel0,tex + e.xz).x;
-    float ty = texture(iChannel0,tex + e.zy).x;
+    float tx = texture(iChannel0,tex + e.xz).x; // north
+    float ty = texture(iChannel0,tex + e.zy).x; // east
     vec2 offset = vec2(t-tx,t-ty);
 
+    // get a normal with the differences
     vec3 normal = normalize(vec3(offset, 1. ));
   
     // use the normal to calculate a phong  light model
