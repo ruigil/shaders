@@ -2,8 +2,6 @@
 #define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
 
 #include '../utils/2d-utils.glsl'
-#include '../utils/noise.glsl'
-#include '../utils/complex-math.glsl'
 
 void main() {
     vec2 r = ref*4.;
