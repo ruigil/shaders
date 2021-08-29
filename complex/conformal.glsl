@@ -3,7 +3,7 @@
 
 #include '../utils/2d-utils.glsl'
 #include '../utils/complex-math.glsl'
-#include '../utils/noise.glsl'
+
 
 float teeth(vec2 r, float n, float a) {
     float s = n/6.283; // scale the sdf to composate for the log distortion
