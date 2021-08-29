@@ -58,14 +58,14 @@ float ssaa(float v) { return smoothstep(-1. ,1. ,v / fwidth(v) ); }
 float ssaae(float v, float e) { return smoothstep(0. ,e , v ); }
 
 // stroke an sdf 'd', with a width 'w', and a fill 'f' 
-float stroke(float d, float w, bool f) {  return abs(ssaa(abs(d)-w*.5) - float(f)); }
+float stroke(float d, float w, bool f) {  return abs(ssaae(abs(d)-w*.5, 2./iResolution.x) - float(f)); }
 
 // stroke an sdf 'd', with a width 'w', and a fill 'f' 
 // this overload version allows an epsilon when fwidth is unsuitable
 float stroke(float d, float w, float e, bool f) {  return abs(ssaae(abs(d)-w*.5,e) - float(f)); }
 
 // fills an sdf 'd', and a fill 'f'. false for the fill means inverse 
-float fill(float d, bool f) { return abs(ssaa(d) - float(f)); }
+float fill(float d, bool f) { return abs(ssaae(d, 2./iResolution.x) - float(f)); }
 
 // fills an sdf 'd', and a fill 'f'. false for the fill means inverse 
 // this overload version allows an epsilon when fwidth is unsuitable
