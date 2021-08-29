@@ -10,7 +10,7 @@ void main() {
     r = mod(floor(r.x) + floor(r.y) , 2.) == 0. ? 
             fract(r)-.5 : fract(r.yx)-.5;
     
-    // the pattern
+    // the pattern   
     float v = 
         fill( rect( r, vec2(.5,1.1) ), .01,  true) *
         fill( sin((r.x-.707) *60.), .1, true) *
