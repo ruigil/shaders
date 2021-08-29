@@ -6,8 +6,6 @@
 #include '../utils/2d-utils.glsl'
 #include '../utils/noise.glsl'
 
-#iChannel0::MagFilter "Linear"
-#iChannel0::WrapMode "Repeat"
 #iChannel0 "self"
 
 
@@ -24,14 +22,14 @@ void main() {
     vec2 r = ref;
 
     // we create a vector field
-    vec2 ff = vec2(.0,.005)*rot(radians(noise(vec3(r, iTime*.1)) * 360.) ); 
+    vec2 ff = vec2(.0,.005)*rot(radians(noise(vec3(r+iTime, iTime*.1)) * 360.) ); 
 
     // we use the vector field to sample the texture feedback
     // and do a texture advection to generate flow
-    float t = texture(iChannel0,fract(tex+ff)).r-.04;
+    float t = texture(iChannel0,fract(tex+ff)).r-.02;
     
     // we use another noise field to add some white points as sources
-    float f = max(t,step(noise(vec3(r*55.,iTime*2.)),.1));
+    float f = max(t,step(noise(vec3(r*155.,iTime*20.)),.1));
 
     oPixel = vec4(vec3(f),1.);   
 }
