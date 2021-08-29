@@ -15,7 +15,9 @@ void main() {
     // and we erase below the new line, it gives the illusion of 3d
 
     // the size of the reference frame
-    float size = 20.;
+    float size = 40.;
+
+    vec2 m = iMouse.xy/iResolution.xy;
 
     // the reference frame is between [-1,1] * size
     vec2 r = ref * size;
@@ -23,14 +25,14 @@ void main() {
     vec2 t = tex * size;
 
     // the offset we apply to the ghost line
-    vec2 offset = vec2(.2,.07);
+    vec2 offset = vec2(.5-m.x,m.y);
 
     // initialize the output value with the previous frame
     // we offset it and substract 0.03 to make it fade into the distance
-    float f = max(texture(iChannel0,(t-offset) / size).r - 0.03,.0); 
+    float f = max(texture(iChannel0,(t-offset) / size).r - 0.01,.0); 
 
     // the reference frame is deformed with a couple of oscillators
-    r += vec2(5.0, (sin( r.x + iTime) + sin( .5 *r.x - iTime )) + 4.);    
+    r += vec2(.0, (sin( r.x + iTime) + sin( .5 *r.x - iTime )) + 4.);    
 
     // the final value
     f = min(
