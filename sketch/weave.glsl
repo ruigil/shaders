@@ -4,7 +4,7 @@
 #include '../utils/2d-utils.glsl'
 
 void main() {
-    vec2 r = ref * 7.;
+    vec2 r = (ref * (3. + sin(iTime))) * rot(radians(sin(iTime*.2)*45.));
 
     // create tiles and every other tile rotate the pattern 90 degrees
     r = mod(floor(r.x) + floor(r.y) , 2.) == 0. ? 
