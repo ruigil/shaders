@@ -155,13 +155,13 @@ vec3 antialias(vec2 r) {
     Ray ray = Ray(eye, setCamera(ref, eye, vec3(0.), fov  ));
     color += shade(ray,3);
 
-    //ray = Ray(eye , setCamera(ref - e.xy, eye, vec3(0.), fov  ));
-    //color += shade(ray,1);
+    ray = Ray(eye , setCamera(ref - e.xy, eye, vec3(0.), fov  ));
+    color += shade(ray,3);
 
-    //ray = Ray(eye , setCamera(ref + e.xy, eye, vec3(0.), fov  ));
-    //color += shade(ray,1);
+    ray = Ray(eye , setCamera(ref + e.xy, eye, vec3(0.), fov  ));
+    color += shade(ray,3);
 
-    return color;
+    return color*.3;
 }
 
 void main() {

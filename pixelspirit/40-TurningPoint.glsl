@@ -12,7 +12,7 @@ float flip(float v) { return v == 0. ? 1. : sign(v); }
 void main() { 
 
     // This one is quite magical.. double flip !
-    vec2 r = - ref * flip(ref.y);
+    vec2 r =  - ref * flip(ref.y);
 
     float f = 
         stroke(tri((r - vec2(.2, .15)) * 2.), .15, 1.) + 
