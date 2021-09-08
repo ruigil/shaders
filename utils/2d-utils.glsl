@@ -57,7 +57,7 @@ float ssaa(float v) { return smoothstep(-1. ,1. ,v / fwidth(v) ); }
 float ssaae(float v, float e) { return smoothstep(0. ,e , v ); }
 
 // stroke an sdf 'd', with a width 'w', and a fill 'f' 
-float stroke(float d, float w, bool f) {  return abs(ssaa(abs(d)-w*.5) - float(f)); }
+float stroke(float d, float w, bool f) {  return abs(ssaae(abs(d)-w*.5, 2./iResolution.x) - float(f)); }
 
 // stroke an sdf 'd', with a width 'w', and a fill 'f' 
 // this overload version allows an epsilon when fwidth is unsuitable

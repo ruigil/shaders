@@ -3,7 +3,7 @@
 
 #include '../utils/2d-utils.glsl'
 #include '../utils/complex-math.glsl'
-#include '../utils/noise.glsl'
+
 
 float teeth(vec2 r, float n, float a) {
     float s = n/6.283; // scale the sdf to composate for the log distortion
@@ -44,7 +44,7 @@ void main() {
     float step = 6.283/10.;
     float t = iTime;
     
-    // and draw the pattern
+    // and draw the pattern,
     // we draw the teeth 5 times. 1 for center
     // 2 horizontal and 2 vertical neighbours
     // this will hide the fact that this is a grid

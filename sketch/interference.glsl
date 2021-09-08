@@ -14,7 +14,7 @@ void main() {
     vec2 c = r + 30. * vec2(cos(t*3.), sin(t*2.));
 
     // add sin waves from the oscilator and one at the center
-    float f = clamp( sin(length(c)) + sin(length(r)) , 0., 1. );
+    float f = clamp(  sin(length(c)-t*40.) + sin(length(r) -t*30.) , 0., 1. );
 
     oPixel = vec4(vec3(f),1.);
 }

@@ -4,13 +4,13 @@
 #include '../utils/2d-utils.glsl'
 
 void main() {
-    vec2 r = ref * 7.;
+    vec2 r = (ref * (3. + sin(iTime))) * rot(radians(sin(iTime*.2)*45.));
 
     // create tiles and every other tile rotate the pattern 90 degrees
     r = mod(floor(r.x) + floor(r.y) , 2.) == 0. ? 
             fract(r)-.5 : fract(r.yx)-.5;
     
-    // the pattern
+    // the pattern   
     float v = 
         fill( rect( r, vec2(.5,1.1) ), .01,  true) *
         fill( sin((r.x-.707) *60.), .1, true) *
