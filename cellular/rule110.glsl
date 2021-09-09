@@ -4,7 +4,7 @@
 #include '../utils/2d-utils.glsl'
 #iChannel0 "self"
 
-#define size 240.
+#define size 170.
 
 // Rule 110 is a Turing-complete cellular automata 
 // https://en.wikipedia.org/wiki/Rule_110
@@ -12,18 +12,20 @@ float rule110(vec2 r) {
     vec2 current = floor(r*size) +.5; // current cell
 
     int result = 0;
+    // if it is the first frame or mouse down, randomize the line
     if ((iFrame <= 1) || (iMouse.z>0.)){
         result = int(floor( hash( floor(iTime) + current) + .5));
     } else {
-
-        int l0 = int( texture (iChannel0, fract( ( (current+vec2(1.,-1.))) /size) ) );
-        int l1 = int( texture (iChannel0, fract( ( (current+vec2(0.,-1.))) /size) ) );
-        int l2 = int( texture (iChannel0, fract( ( (current+vec2(-1.,-1.))) /size) ) );
+        // get the previous state from the texture
+        int l0 = int( texture (iChannel0, fract(  (current + vec2(1.,-1.)) / size) ) );
+        int l1 = int( texture (iChannel0, fract(  (current + vec2(0.,-1.)) / size) ) );
+        int l2 = int( texture (iChannel0, fract(  (current + vec2(-1.,-1.)) / size) ) );
 
         // the rule number is ...
         // l2 * 2^2 + l1 * 2^1 + l0 * 2^0
         int rule = (l2 << 2) + (l1 << 1) + l0;
         
+
         // The ruleset
         // https://en.wikipedia.org/wiki/Rule_110#/media/File:One-d-cellular-automaton-rule-110.gif
         result = 
