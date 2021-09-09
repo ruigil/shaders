@@ -1,54 +1,57 @@
-
 #define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
-#define mouse ((iMouse.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
-#define tex gl_FragCoord.xy/iResolution.xy 
 
 #include '../utils/noise.glsl'
 #include '../utils/2d-utils.glsl'
 #iChannel0 "self"
 
-//#iChannel0::MinFilter "NearestMipMapNearest"
-#iChannel0::MagFilter "Nearest"
-#iChannel0::WrapMode "Repeat"
+#define size 240.
 
-#define size 100.
-
-// Conway Game of Life is a popular Cellular Automaton
-// https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
+// Rule 110 is a Turing-complete cellular automata 
+// https://en.wikipedia.org/wiki/Rule_110
 float rule110(vec2 r) {
-    vec2 current = floor(tex*size) + .5; // current cell
-    float alive = 1.-texture(iChannel0,current/size).r; // is it alive ?
-    float nb = 0.; // neighbours
-    
-    // count neighbours...
-    for(int i= -1; i <= 1; i += 1) {
-        for(int j= -1; j <= 1; j += 1) {
-            nb += 1.-texture(iChannel0, (current + vec2(i,j)) / size ).r;
-        }
+    vec2 current = floor(r*size) +.5; // current cell
+
+    int result = 0;
+    if ((iFrame <= 1) || (iMouse.z>0.)){
+        result = int(floor( hash( floor(iTime) + current) + .5));
+    } else {
+
+        int l0 = int( texture (iChannel0, fract( ( (current+vec2(1.,-1.))) /size) ) );
+        int l1 = int( texture (iChannel0, fract( ( (current+vec2(0.,-1.))) /size) ) );
+        int l2 = int( texture (iChannel0, fract( ( (current+vec2(-1.,-1.))) /size) ) );
+
+        // the rule number is ...
+        // l2 * 2^2 + l1 * 2^1 + l0 * 2^0
+        int rule = (l2 << 2) + (l1 << 1) + l0;
+        
+        // The ruleset
+        // https://en.wikipedia.org/wiki/Rule_110#/media/File:One-d-cellular-automaton-rule-110.gif
+        result = 
+            rule == 7 ? 0 :
+            rule == 6 ? 1 :
+            rule == 5 ? 1 :
+            rule == 4 ? 0 :
+            rule == 3 ? 1 :
+            rule == 2 ? 1 :
+            rule == 1 ? 1 :
+            0;
     }
-    nb -= alive; // do not count self
-    
-    // rules...(
-    return (bool(alive) && (nb == 2. || nb == 3.)) || (!bool(alive) && nb == 3.) ? 1. : 0.;
+
+    return float(result);
 }
 
 
 void main() {
-    vec2 current = floor(tex*size); // current cell
-    float r110 = texture(iChannel0,current /size ).r;
+    vec2 ref = gl_FragCoord.xy/iResolution.xy;
+    // the offset is to slide the texture down, by the size of the square   
+    float offset = floor(iResolution.y/size) / iResolution.y;
 
-    vec2 coord = floor(tex*size);
+    // if it is the first line, apply the rule110 
+    // or else slide the texture the offset
+    float r110 = (ref.y >= 1.-(1./size)) ?
+        rule110(ref) :
+        texture(iChannel0, ref+vec2(0.,offset)).r;  
 
-    if (coord.y == 0.) {
-        if (iFrame == 1) {
-            r110 = floor( hash(iTime + floor(tex*size)) +.5);
-        } else {
-            r110 = texture(iChannel0, (current + vec2(0,.5)) / size ).r;
-        }
-    }
-
-
-    
+    // output the calculated value
     oPixel = vec4(vec3(r110),1.); 
 }
