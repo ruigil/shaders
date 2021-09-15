@@ -1,5 +1,11 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+#version 300 es
+precision highp float;
+
+uniform vec2 u_resolution;
+// reference frame coordinated system with corrected aspect ratio, [-0.5,0.5 ] with [0,0] center of the screen
+#define ref ((gl_FragCoord.xy - u_resolution.xy *.5) / ( u_resolution.x < u_resolution.y ? u_resolution.x : u_resolution.y)) 
+// minimum epsilon difference for one pixel
+#define EPS (1./ (u_resolution.x < u_resolution.y ? u_resolution.x : u_resolution.y ))
 
 // From Pixel Spirit Deck
 // https://pixelspiritdeck.com/
@@ -13,8 +19,9 @@ float rect(vec2 r, vec2 size) { return max(abs(r.x) - size.x, abs(r.y) - size.y)
 // We define a function cross by composing two rectangles.
 float crosss(vec2 r, vec2 size) { return min(rect(r, size.xy), rect(r, size.yx)); }
 
+out vec4 pixel;
 void main() { 
-    vec2 r = ref;
+    vec2 r = ref * 2.;
 
     float v =
         // the first outer stroke
@@ -32,5 +39,5 @@ void main() {
         // adding the inner cross
         fill(crosss(r, vec2(.07,.35)), 1.);
 
-    oPixel = vec4(vec3(v), 1.);
+    pixel = vec4(vec3(v), 1.);
 }

@@ -1,7 +1,10 @@
+#version 300 es
+precision highp float;
 
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+uniform vec2 u_resolution;
+uniform float u_time;
 
+#include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
 #include '../utils/noise.glsl'
 
@@ -38,22 +41,23 @@ vec4 voronoi( in vec2 x) {
     return vec4( res.xy, sqrt(res.zw) );
 }
 
+out vec4 pixel;
 void main() {
     // voronoi tesselation of the plane
     // each boundary if based on the distance
     // between random points on a grid
 
     // reference frame
-    vec2 r = ref*3.;
+    vec2 r = ref(UV, u_resolution) * 6.;
 
     // noise scaling to animate
-    r *= 2.+noise(r*.3+iTime)*2.+sin(iTime);
+    r *= 2. + noise(r*.3+u_time)*2. + sin(u_time);
 
     // voronoi of the plane
     vec4 v = voronoi(r);
 
     // fill borders and a circle on the random point
-    float f = fill(v.w,.3,true) + fill(circle(v.xy,.1), true);
+    float f = fill(v.w,.3,true) + fill(circle(v.xy,.1), EPS, true);
 
-    oPixel = vec4(vec3(f),1.);
+    pixel = vec4(vec3(f),1.);
 }

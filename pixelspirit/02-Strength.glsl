@@ -1,5 +1,9 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y)) 
+#version 300 es
+precision highp float;
+
+uniform vec2 u_resolution;
+// reference frame coordinated system with corrected aspect ratio, [-0.5,0.5 ] with [0,0] center of the screen
+#define ref ((gl_FragCoord.xy - u_resolution.xy *.5) / ( u_resolution.x < u_resolution.y ? u_resolution.x : u_resolution.y)) 
 
 #define PI 3.14159265359
 
@@ -13,8 +17,8 @@
 // because ref.y is between -1,1 multiplied by PI it becomes -PI,PI
 // scaled by .2 and added to the ref.x the vertical line becomes wavy...
 // try swaping the coordinates and change the scale factor.
-
+out vec4 pixel;
 void main() {
     float v = step(0., ref.x + .2 * sin(ref.y * PI));
-    oPixel = vec4(vec3(v), 1.);
+    pixel = vec4(vec3(v), 1.);
 }

@@ -1,14 +1,17 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
-#define tex (gl_FragCoord.xy/iResolution.xy)
+#version 300 es
+precision highp float;
 
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+uniform sampler2D u_buffer0;
 
+#include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
 #include '../utils/noise.glsl'
 
-#iChannel0 "self"
-
-
+#if defined(BUFFER_0)
+out vec4 pixel;
 void main() {
 
     // a flow field is a vector field where each point is 
@@ -19,17 +22,23 @@ void main() {
     // here a flowfield is contructed interpreting the value noise
     // between [0,1] to be an angle for the direction
 
-    vec2 r = ref;
+    vec2 r = ref(UV, u_resolution) * 3.;
 
     // we create a vector field
-    vec2 ff = vec2(.0,.005)*rot(radians(noise(vec3(r+iTime, iTime*.1)) * 360.) ); 
+    vec2 ff = vec2(.0,.005)*rot(radians(noise(vec3(r+u_time, u_time*.1)) * 360.) ); 
 
     // we use the vector field to sample the texture feedback
     // and do a texture advection to generate flow
-    float t = texture(iChannel0,fract(tex+ff)).r-.02;
+    float t = texture(u_buffer0,fract(UV+ff)).r-.02;
     
     // we use another noise field to add some white points as sources
-    float f = max(t,step(noise(vec3(r*155.,iTime*20.)),.1));
+    float f = max(t,step(noise(vec3(r*155.,u_time*20.)),.1));
 
-    oPixel = vec4(vec3(f),1.);   
+    pixel = vec4(vec3(f),1.);   
 }
+#else
+out vec4 pixel;
+void main() { 
+    pixel = vec4(vec3(texture(u_buffer0,UV).r), 1.);
+}
+#endif

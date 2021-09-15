@@ -1,6 +1,10 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+#version 300 es
+precision highp float;
 
+uniform vec2 u_resolution;
+uniform float u_time;
+
+#include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
 #include '../utils/complex-math.glsl'
 
@@ -10,6 +14,7 @@ float teeth(vec2 r, float n, float a) {
     return stroke(s*circle(r,.4), .4, .01, true) * fill(s*rays(r * rot(a), 10.), .01, false);
 }
 
+out vec4 pixel;
 void main() {
 
     // this shader implements a conformal mapping
@@ -18,14 +23,14 @@ void main() {
     // and then distort the grid with the complex transform
 
     // the refrence frame
-    vec2 r = ref*2.;
+    vec2 r = ref(UV,u_resolution) * 2.;
 
     // we transform the reference frame in polar coordinates
     vec2 z = toPolar(r);
 
     // a few variables for the animation
-    float ct = cos(iTime*.5);
-    float st = sin(iTime*.3);
+    float ct = cos(u_time*.5);
+    float st = sin(u_time*.3);
     float scale = 10. / 6.283;
 
     // the complex transform is a dipole
@@ -33,7 +38,7 @@ void main() {
     r = zdiv( zadd( z, 2. * vec2(ct,st) ), zsub( z, 2.*vec2(st, ct)));
 
     // we apply a log scale
-    r = vec2(log(r.x) - iTime*.5, r.y );
+    r = vec2(log(r.x) - u_time*.5, r.y );
     r *= scale;
 
     // we repeat the space and use an alternating sign
@@ -42,7 +47,7 @@ void main() {
     r = fract(r)-.5;
 
     float step = 6.283/10.;
-    float t = iTime;
+    float t = u_time;
     
     // and draw the pattern,
     // we draw the teeth 5 times. 1 for center
@@ -57,5 +62,5 @@ void main() {
         teeth(vec2(r.x,r.y+1.), 10.,s*-t+step) +
         stroke(circle(r,.31), .15, .01, true);      
 
-    oPixel = vec4(vec3(f),1.);
+    pixel = vec4(vec3(f),1.);
 }

@@ -1,16 +1,21 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
-#define tex (gl_FragCoord.xy/iResolution.xy)
+#version 300 es
 
+precision highp float;
+
+uniform vec2 u_resolution;
+uniform float u_time;
+uniform sampler2D u_buffer0;
+
+#include '../constants.glsl'
 #include '../utils/complex-math.glsl'
 #include '../utils/2d-utils.glsl'
 #include '../utils/noise.glsl'
 
-#iChannel0 "self"
-
+#if defined(BUFFER_0)
+out vec4 pixel;
 void main() {
     
-    vec2 r = ref*3.;
+    vec2 r = ref(UV, u_resolution) * 7.;
 
     vec2 fl = floor(r);
     r = fract(r)-.5;
@@ -28,9 +33,9 @@ void main() {
     );
     
     // frame feedback
-    float f = texture(iChannel0, tex ).r; 
+    float f = texture(u_buffer0, UV ).r; 
 
-    float t = iTime*.1;
+    float t = u_time;
 
     // calculate the parametric curve
     for (int i=0; i<fos.length(); i++) 
@@ -39,5 +44,12 @@ void main() {
     // draw a point
     f += fill(circle(r,.005), .01, true);
 
-    oPixel = vec4(vec3(f),1.);
+    pixel = vec4(vec3(f),1.);
 }
+#else
+// we just copy the texture to the screen...
+out vec4 pixel;
+void main() {
+    pixel = vec4( texture(u_buffer0, UV ).rgb , 1.);
+}
+#endif

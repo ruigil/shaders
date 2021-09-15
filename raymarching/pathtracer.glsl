@@ -1,6 +1,12 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+#version 300 es
+precision highp float;
 
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+#include '../constants.glsl'
+#include '../utils/2d-utils.glsl'
 #include '../utils/3d-utils.glsl'
 #include '../utils/noise.glsl'
 
@@ -144,31 +150,33 @@ vec3 shade(Ray ray, int depth) {
 }
 
 vec3 antialias(vec2 r) {
-    float ct = cos(iTime);
-    float st = sin(iTime);
+    float ct = cos(u_time);
+    float st = sin(u_time);
 
     vec3 eye =  vec3(ct, .5,-1.) * 2.;
-    vec2 e = vec2(1./iResolution);
+    vec2 e = PIXEL_SIZE;
     vec3 color = vec3(0.);
     float fov = radians(70.);
  
-    Ray ray = Ray(eye, setCamera(ref, eye, vec3(0.), fov  ));
+    Ray ray = Ray(eye, setCamera(r, eye, vec3(0.), fov  ));
     color += shade(ray,3);
 
-    ray = Ray(eye , setCamera(ref - e.xy, eye, vec3(0.), fov  ));
+    ray = Ray(eye , setCamera(r - e.xy, eye, vec3(0.), fov  ));
     color += shade(ray,3);
 
-    ray = Ray(eye , setCamera(ref + e.xy, eye, vec3(0.), fov  ));
+    ray = Ray(eye , setCamera(r + e.xy, eye, vec3(0.), fov  ));
     color += shade(ray,3);
 
     return color*.3;
 }
 
+out vec4 pixel;
 void main() {
 
+    vec2 r = ref(UV, u_resolution);
     // we trace the ray, and shade the hit point to the eye
-    vec3 color = antialias(ref); 
+    vec3 color = antialias(  r ); 
 
     // gamma color correction
-    oPixel = vec4( gamma(color,2.2) ,1.);   
+    pixel = vec4( gamma(color,2.2) ,1.);   
 }

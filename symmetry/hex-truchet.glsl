@@ -1,6 +1,10 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+#version 300 es
+precision highp float;
 
+uniform vec2 u_resolution;
+uniform float u_time;
+
+#include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
 #include '../utils/noise.glsl'
 
@@ -29,19 +33,20 @@ vec4 lat6(vec2 r) {
     return vec4(r-center,hc.xz);
 }
 
+out vec4 pixel;
 void main() {
 
     // call the function that maps reference space to a hexagon tile
     // the xy component contains the reference of the point remapped
     // the zw component contains the hexagonal coordinates of the point.
-    vec4 r = lat6(ref*10.);
+    vec4 r = lat6(ref(UV, u_resolution) * 20.);
 
     // use the hexagonal coordinates as a seed for noise to choose the pattern
-    float n = noise(r.zw+iTime*.01);
+    float n = noise(r.zw+u_time*.01);
 
     // rotate the reference by a random multiple of 60 degrees
     // So that the patterns are randomly rotated to add to the diversity
-    vec2 hr = r.xy * rot( radians(60. * floor(noise(r.zw+iTime*.01)*6.) ) );
+    vec2 hr = r.xy * rot( radians(60. * floor(noise(r.zw+u_time*.01)*6.) ) );
 
     // draw one of 4 rotated patterns with equal probability
     float f =
@@ -67,5 +72,5 @@ void main() {
     
     // uncomment the next line to see the remapped plane
     //f = length(r.xy);
-    oPixel = vec4(vec3(f),1.);
+    pixel = vec4(vec3(f),1.);
 }

@@ -1,13 +1,19 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+#version 300 es
+precision highp float;
 
+uniform vec2 u_resolution;
+uniform float u_time;
+uniform vec2 u_mouse;
+uniform sampler2D u_buffer0;
+
+#include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
 #include '../utils/noise.glsl'
 
-
+out vec4 pixel;
 void main() {
 
-    vec2 r = ref;
+    vec2 r = ref(UV, u_resolution);
 
     // the size of the maze
     float grid = 30.;
@@ -16,13 +22,13 @@ void main() {
     // that returns 1 or -1 of a random function. 
     // this will give us flipped reference frame 
     // in the x axis with 50% probability 
-    vec2 m = fract(grid * vec2( signz(noise(iTime*.1 + floor(grid * r)) - .5) * r.x,  r.y ));
+    vec2 m = fract(grid * vec2( signz(noise(u_time*.1 + floor(grid * r)) - .5) * r.x,  r.y ));
 
     // draw a diagonal line
     float v = stroke(m.x - m.y, .1, .1, true);
 
     // clip borders
-    v *= fill( rect(r,vec2(1.6)) , true);
+    v *= fill( rect(r,vec2(1.6)) , EPS, true);
 
-    oPixel = vec4(vec3(v),1.);
+    pixel = vec4(vec3(v),1.);
 }

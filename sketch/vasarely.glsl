@@ -1,8 +1,11 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+#version 300 es
+precision highp float;
 
+uniform vec2 u_resolution;
+uniform float u_time;
+
+#include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
-
 
 // accept value between [-1,1]
 // returns a scale between double and half
@@ -10,12 +13,13 @@ float scale(float d) {
     return min( - 1./ (min(1. + d, 1.5) - 2.), - 1. / (min(1. + d *.5, 1.5) - 2.) );
 }
 
+out vec4 pixel;
 void main() {
 
     // inspired by Victor Vasarely
 
     // reference frame
-    vec2 r = ref * 7.;
+    vec2 r = ref(UV, u_resolution) * 14.;
 
     // the distortion is fake, nothing to do with real perspective
     // we generate a field between [-1,0]
@@ -28,12 +32,12 @@ void main() {
     // to generate pattern of 01010101
     float t = floor(mod(floor(r.x)+floor(r.y),2.));
     // a grid
-    float f = stroke(rect(fr, vec2(1.)), .05, true );
+    float f = stroke(rect(fr, vec2(1.)), .05, EPS, true );
    
     // use the pattern to choose the shape
     f += bool(t) ? 
-          fill(circle(fr,.3 ), .01, sign(r.x*r.y) < 0. ) 
-        : fill(rect(fr*rot(iTime),vec2(.4)), .01, true );
+          fill(circle(fr,.3 ), EPS , sign(r.x*r.y) < 0. ) 
+        : fill(rect(fr * rot(u_time),vec2(.4)), EPS, true );
 
-    oPixel = vec4(vec3(f),1.);   
+    pixel = vec4(vec3(f),1.);   
 }

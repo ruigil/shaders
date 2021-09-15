@@ -1,24 +1,28 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+#version 300 es
+precision highp float;
 
+uniform vec2 u_resolution;
+uniform float u_time;
+
+#include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
 #include '../utils/noise.glsl'
 #include '../utils/complex-math.glsl'
 
-
+out vec4 pixel;
 void main() {
 
     // convert to polar
-    vec2 r = toPolar(ref*20.);
+    vec2 r = toPolar(ref(UV, u_resolution) * 40.);
 
     // add two oscilators on the radial coordinate
-    r += vec2(r.x * (sin(r.y * 3. + iTime) *.2 + sin(r.y * 7. - iTime) *.2),0.);
+    r += vec2(r.x * (sin(r.y * 3. + u_time) *.2 + sin(r.y * 7. - u_time) *.2),0.);
 
     float f = 
         // repeat on the radial axis and convert to cartesian
-        stroke(circle(toCarte(vec2(fract(r.x), r.y)), .5), .1, true) *
+        stroke(circle(toCarte(vec2(fract(r.x), r.y)), .5), .1, EPS, true) *
         // clip boundary
-        fill(circle(toCarte(r), 10.), true);
+        fill(circle(toCarte(r), 10.), EPS, true);
 
-    oPixel = vec4(vec3(f),1.);
+    pixel = vec4(vec3(f),1.);
 }

@@ -1,10 +1,15 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+#version 300 es
+precision highp float;
 
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+#include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
 #include '../utils/noise.glsl'
 
-
+out vec4 pixel;
 void main() {
     // This is a remix of "Cubic Disarray" by Georg Nees.
 
@@ -34,7 +39,7 @@ void main() {
     float gs = 4.;
     
     // change scale of the reference frame
-    vec2 r = ref*gs;
+    vec2 r = ref(UV,u_resolution) * 2. * gs;
 
     // we get a coordinate for each grid cell
     vec2 cr = ceil(r);
@@ -65,15 +70,15 @@ void main() {
             float rf = 40. * (((gs-1.)-(cr.y-n.y)) / ((gs*2.)-2.) );
             
             // a rotated reference frame for the cell that we are caclculating
-            vec2 r2 = (fr + n) * rot( radians(rf * 2.* (noise(iTime + (cr-n))-.5)) );
+            vec2 r2 = (fr + n) * rot( radians(rf * 2.* (noise(u_time + (cr-n))-.5)) );
             
             // and we accumulate the values
-            v = max(v, stroke(rect(r2, vec2(1.)), .02 , .03, true) ) ;
+            v = max(v, stroke(rect(r2, vec2(1.)), .04 , EPS, true) ) ;
         }
     }
     
     // clip borders
-    v *= fill( rect(r,vec2((gs*2.)-.5)), true);
+    v *= fill( rect(r,vec2((gs*2.)-.5)), EPS, true);
 
-    oPixel = vec4(vec3(v),1.);
+    pixel = vec4(vec3(v),1.);
 }

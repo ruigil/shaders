@@ -1,22 +1,27 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+#version 300 es
+precision highp float;
 
+uniform vec2 u_resolution;
+uniform float u_time;
+
+#include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
 #include '../utils/noise.glsl'
 
+out vec4 pixel;
 void main() {
 
-    vec2 r = ref*20.;
+    vec2 r = ref(UV, u_resolution) * 20.;
 
     // adding an oscillator to the reference frame
     // two waves with diffrerent frequencies and offsets
-    r += vec2(0., sin(r.x + iTime) + sin(.5 * r.x - iTime) );
+    r += vec2(0., sin(r.x + u_time) + sin(.5 * r.x - u_time) );
 
     float f = 
         // the line is just a rect, repeated in the y
-         fill(rect(vec2(r.x, fract(r.y) - .5), vec2(30.,.1)),true) * 
+         fill(rect(vec2(r.x, fract(r.y) - .5), vec2(30.,.1)), EPS, true) * 
         // clip the top and bottom
-        fill(abs(r.y) - 15.,true);
+        fill(abs(r.y) - 15., EPS, true);
 
-    oPixel = vec4(vec3(f),1.);
+    pixel = vec4(vec3(f),1.);
 }

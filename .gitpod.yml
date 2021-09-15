@@ -1,8 +1,0 @@
-tasks:
-  - init: echo "Hello and Welcome !"
-    command: echo "Open a shader, 'right-click' and choose the option 'Shader Toy GLSL Preview'"
-
-vscode:
-  extensions:
-    - slevesque.shader@1.1.4:4s2fv0TMgR3h8guOtfuctg==
-    - stevensona.shader-toy@0.10.2:a01D/Y2wtp1Eed52fRD2Gw==

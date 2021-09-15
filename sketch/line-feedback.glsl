@@ -1,12 +1,17 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
-#define tex (gl_FragCoord.xy / iResolution.xy) 
+#version 300 es
+precision highp float;
 
+uniform vec2 u_resolution;
+uniform float u_time;
+uniform vec2 u_mouse;
+uniform sampler2D u_buffer0;
+
+#include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
 #include '../utils/noise.glsl'
 
-#iChannel0 "self"
-
+#if defined(BUFFER_0)
+out vec4 pixel;
 void main() {
 
     // although it looks 3d, there is no such thing here
@@ -17,33 +22,39 @@ void main() {
     // the size of the reference frame
     float size = 40.;
 
-    vec2 m = iMouse.xy/iResolution.xy;
+    vec2 m = u_mouse.xy/u_resolution.xy;
 
     // the reference frame is between [-1,1] * size
-    vec2 r = ref * size;
+    vec2 r = ref(UV, u_resolution) * 2. * size;
     // the texture reference frame is between [0,1] * size
-    vec2 t = tex * size;
+    vec2 t = UV * size;
 
     // the offset we apply to the ghost line
     vec2 offset = vec2(.5-m.x,m.y);
 
     // initialize the output value with the previous frame
     // we offset it and substract 0.03 to make it fade into the distance
-    float f = max(texture(iChannel0,(t-offset) / size).r - 0.01,.0); 
+    float f = max(texture(u_buffer0,(t-offset) / size).r - 0.01,.0); 
 
     // the reference frame is deformed with a couple of oscillators
-    r += vec2(.0, (sin( r.x + iTime) + sin( .5 *r.x - iTime )) + 4.);    
+    r += vec2(.0, (sin( r.x + u_time) + sin( .5 *r.x - u_time )) + 4.);    
 
     // the final value
     f = min(
             1., // is no greater than 1
             (f + // we add the previous value
 
-            (stroke(r.y, .3, true) * // and the new line
-            stroke(r.x, size,true))) * // that we clip the borders
+            (stroke(r.y, .3, EPS, true) * // and the new line
+            stroke(r.x, size, EPS, true))) * // that we clip the borders
 
-            fill(r.y,false) // and below the line
+            fill(r.y, EPS, false) // and below the line
         );
 
-    oPixel = vec4(vec3(f),1.);
+    pixel = vec4(vec3(f),1.);
 }
+#else
+out vec4 pixel;
+void main() { 
+    pixel = vec4(vec3(texture(u_buffer0,UV).r), 1.);
+}
+#endif

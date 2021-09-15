@@ -1,5 +1,10 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+#version 300 es
+precision highp float;
+
+uniform vec2 u_resolution;
+
+#define ref ((gl_FragCoord.xy - u_resolution.xy *.5) / ( u_resolution.x < u_resolution.y ? u_resolution.x : u_resolution.y)) 
+#define EPS (1./ (u_resolution.x < u_resolution.y ? u_resolution.x : u_resolution.y ))
 
 // From Pixel Spirit Deck
 // https://pixelspiritdeck.com/
@@ -15,9 +20,10 @@ float poly(vec2 r, float radius, float n) {
     return length(r) * cos(mod(atan(r.y, r.x) - 1.57, 6.28 / n) - (3.14 / n)) - radius ;
 }
 
+out vec4 pixel;
 void main() { 
 
-    vec2 r = ref;
+    vec2 r = ref * 2.;
     
     // changing the signal on the reference frame is the same that doing a vertical and horizontal flip
     float f = 
@@ -29,5 +35,5 @@ void main() {
         stroke(poly(r, .18, 5.), .1, 0.) * 
         fill(poly(-r, .12, 5.), 0.); 
     
-    oPixel = vec4(vec3(f), 1.);
+    pixel = vec4(vec3(f), 1.);
 }

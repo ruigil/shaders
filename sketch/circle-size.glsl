@@ -1,17 +1,24 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+#version 300 es
+precision highp float;
 
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+#include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
+#include '../utils/noise.glsl'
 
+out vec4 pixel;
 void main() {
 
-    vec2 r = ref*7.;
+    vec2 r = ref(UV, u_resolution) * 14.;
 
     // repeat space in both directions
     vec2 r1 = fract(r) - .5;
  
     // time speed
-    float t = .2* iTime * 6.283;
+    float t = .2* u_time * 6.283;
     // big circle center
     vec2 c = r + 3. * vec2(cos(t), sin(t*2.));
     // calculate the radius of circles, based on the distance
@@ -20,11 +27,11 @@ void main() {
 
     float f = 
         // draw a square
-        fill(rect(r1, vec2(.8)),true) *
+        fill(rect(r1, vec2(.8)), EPS, true) *
         // clip a circle inside with the calculated size 
-        fill(circle(r1 , radius ), false) *
+        fill(circle(r1 , radius ), EPS, false) *
         // clip a border of the frame
-        fill(rect(r, vec2(9.75) ), true);
+        fill(rect(r, vec2(9.75) ), EPS, true);
 
-    oPixel = vec4(vec3(f),1.);
+    pixel = vec4(vec3(f),1.);
 }

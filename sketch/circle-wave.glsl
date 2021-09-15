@@ -1,11 +1,17 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+#version 300 es
+precision highp float;
 
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+#include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
 
+out vec4 pixel;
 void main() {
 
-    vec2 r = ref*7.;
+    vec2 r = ref(UV, u_resolution) * 14.;
 
     // repeat space in both directions
     vec2 r1 = fract(r) - .5;
@@ -14,15 +20,15 @@ void main() {
     
     // make a rotation with an offset that depends
     // on the x and y component of the square 
-    vec2 r3 = r1 * rot(radians(r2.x + r2.y + iTime * 180.));
+    vec2 r3 = r1 * rot(radians(r2.x + r2.y + u_time * 180.));
 
     float f = 
         // draw a square
-        fill(rect(r1, vec2(.8)),true) *
+        fill(rect(r1, vec2(.8)), EPS, true) *
         // clip a circle inside with the calculated rotation 
-        fill(circle(r3 - vec2(.0,.1), .2), false) *
+        fill(circle(r3 - vec2(.0,.1), .2), EPS, false) *
         // clip a border of the frame
-        fill(rect(r, vec2(9.75) ), true);
+        fill(rect(r, vec2(9.75) ), EPS, true);
 
-    oPixel = vec4(vec3(f),1.);
+    pixel = vec4(vec3(f),1.);
 }

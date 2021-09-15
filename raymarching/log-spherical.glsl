@@ -1,19 +1,25 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+#version 300 es
+precision highp float;
 
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+
+#include '../constants.glsl'
+#include '../utils/2d-utils.glsl'
 #include '../utils/3d-utils.glsl'
 
 // a grid in a log-spherical mapping transform of the coordinates.
 // from : https://www.osar.fr/notes/logspherical/
 float grid(vec3 p) {
     float l = length(p);
-    float scale = 6./3.1415;
+    float scale = 8./3.1415;
     p = vec3(log(l), acos(p.z/length(p)), atan(p.y,p.x));
     p *= scale;
     p = fract(p+.5)-.5;
     
     vec3 size = vec3(1.);
-    return (l/scale)*max(box(p, size ), max(max(-box(p.yyz, size ),-box(p.xxy, size ) ), -box(p.xxz, size ) )-.05 );
+    return (l/scale)*max(box(p, size ), max(max(-box(p.yyz, size ),-box(p.xxy, size ) ), -box(p.xxz, size ) )-.01 );
 }
 
 // the scene with a bounding sphere 
@@ -60,7 +66,6 @@ Material material(vec3 hit) {
     }
 
     return m;
-
 }
 
 // using materials to apply a ligh model
@@ -85,15 +90,16 @@ vec3 shade(vec3 eye, vec3 hit) {
 
 }
 
+out vec4 pixel;
 void main() {
 
-    float ct = cos(iTime*.1);
-    float st = sin(iTime*.1);
+    float ct = cos(u_time*.1);
+    float st = sin(u_time*.1);
 
     vec3 eye =  vec3(ct, .0, st) * 2.; 
-    vec3 ray = setCamera(ref, eye, vec3(0.), radians(90.)  );
+    vec3 ray = setCamera(2. * ref(UV, u_resolution), eye, vec3(0.), radians(90.)  );
 
     vec3 color = shade(eye, trace(eye, ray) );
 
-    oPixel = vec4( gamma(color,1.2) ,1.);   
+    pixel = vec4( gamma(color,1.2) ,1.);   
 }

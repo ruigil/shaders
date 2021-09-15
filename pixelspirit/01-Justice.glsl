@@ -1,5 +1,9 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y)) 
+#version 300 es
+precision highp float;
+
+uniform vec2 u_resolution;
+// reference frame coordinated system with corrected aspect ratio, [-0.5,0.5 ] with [0,0] center of the screen
+#define ref ((gl_FragCoord.xy - u_resolution.xy *.5) / ( u_resolution.x < u_resolution.y ? u_resolution.x : u_resolution.y)) 
 
 // From Pixel Spirit Deck
 // https://pixelspiritdeck.com/
@@ -15,8 +19,8 @@
 // when ref.x goes from the negative side and crosses 0, to the positive side
 // the step function goes from 0 to 1 and the pixel from black to white.
 // try changing 0. in the step function to a value between -1.0 and 1.0
-
+out vec4 pixel;
 void main() {
-    float v = step(0.,ref.x);
-    oPixel = vec4(vec3(v),1.);
+    float v = step(0., ref.x);
+    pixel = vec4( vec3(v), 1.);
 }

@@ -1,5 +1,8 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+#version 300 es
+precision highp float;
+
+uniform vec2 u_resolution;
+uniform float u_time;
 
 /*
 When you graph a real function y=f(x) you need a plane (2D). When you 
@@ -15,9 +18,11 @@ this youtube serie is very good !
 https://www.youtube.com/watch?v=T647CGsuOVU
 */
 
-#define speed iTime*.05
-
+#include '../constants.glsl'
 #include '../utils/complex-math.glsl'
+#include '../utils/2d-utils.glsl'
+
+#define speed (u_time*.05)
 
 //sinz, cosz and tanz came from -> https://www.shadertoy.com/view/Mt2GDV
 vec2 zsin(vec2 z) {
@@ -83,7 +88,6 @@ vec2 julia(vec2 z) {
 }
 
 vec2 map(vec2 uv) {
-  
 	float t = floor(mod(speed,10.));
   
 	//t = 7.;
@@ -124,22 +128,21 @@ vec2 map(vec2 uv) {
          zeta(zadd(z,vec2(8.,.0)));
    
  
-	return toCarte(fz);  
+	return toCarte(fz);
 }
 
 vec3 color(vec2 uv) {
-    float a = atan(uv.y,uv.x);
-    float r = length(uv);
+   float a = atan(uv.y,uv.x);
+   float r = length(uv);
     
-    vec3 c = .5 * ( cos(a*vec3(2.,2.,1.) + vec3(.0,1.4,.4)) + 1. );
-
-    return c * smoothstep(1.,0.,abs(fract(log(r)-iTime*.1)-.5)) // modulus lines
-             * smoothstep(1.,0.,abs(fract((a*7.)/3.14+(iTime*.1))-.5)) // phase lines
-             * smoothstep(11.,0.,log(r)) // infinity fades to black
-             * smoothstep(.5,.4,abs(fract(speed)-.5)); // scene switch
+   vec3 c = .5 * ( cos(a*vec3(2.,2.,1.) + vec3(.0,1.4,.4)) + 1. );
+   return c * smoothstep(1.,0.,abs(fract(log(r)-u_time*.1)-.5)) // modulus lines
+            * smoothstep(1.,0.,abs(fract((a*7.)/3.14+(u_time*.1))-.5)) // phase lines
+            * smoothstep(11.,0.,log(r)) // infinity fades to black
+            * smoothstep(.5,.4,abs(fract(speed)-.5)); // scene switch
 }
 
-void main(){
-	 vec2 uv = ref;
-     oPixel = vec4( color(map(uv)), 1.0 );
+out vec4 pixel;
+void main() {
+   pixel = vec4( color( map( ref(UV, u_resolution ) ) ), 1.0 );
 }

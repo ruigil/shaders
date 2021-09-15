@@ -1,10 +1,15 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+#version 300 es
+precision highp float;
 
+uniform vec2 u_resolution;
+uniform float u_time;
+
+#include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
 
+out vec4 pixel;
 void main() {
-    vec2 r = ref*4.;
+    vec2 r = ref(UV, u_resolution) * 8.;
     
     // an example of symmetry and recursivity
     // all is built from a single pattern
@@ -55,5 +60,5 @@ void main() {
         smoothstep(.3,.0, abs(r2.x));
         
     
-    oPixel = vec4(vec3(f),1.);
+    pixel = vec4(vec3(f),1.);
 }

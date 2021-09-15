@@ -1,7 +1,10 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
-#define tex (gl_FragCoord.xy/iResolution.xy)
+#version 300 es
+precision highp float;
 
+uniform vec2 u_resolution;
+uniform float u_time;
+
+#include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
 #include '../utils/noise.glsl'
 
@@ -9,9 +12,10 @@
 // the bump function is just some wave interference mirrored
 float bump(vec2 r) {
     r = fold( fold(vec2(r.x,abs(r.y)), radians(120.)) , radians(-120.)); 
-    return fill(sin(length(50.*(r-vec2(0.,.5+.5+sin(iTime*.1)))) -iTime * 3.) + sin(length(r*25.)-iTime*2.), 1., true);
+    return fill(sin(length(50.*(r-vec2(0.,.5+.5+sin(u_time*.1)))) -u_time * 3.) + sin(length(r*25.)-u_time*2.), 1., true);
 }
 
+out vec4 pixel;
 void main() {
 
     // this shader implements the bump map technique
@@ -19,7 +23,7 @@ void main() {
     // it works by messing with the normal vector to a surface, before using it in the light equation
 
     // reference frame
-    vec2 r = ref;
+    vec2 r = ref(UV, u_resolution);
  
     // the diffuse color is the color when ther is light
     vec3 diffuse = vec3(0.2);
@@ -44,7 +48,7 @@ void main() {
     // light intensity
     vec3 li = vec3(.5); 
     // noisy light position;
-    float n = 3.14*noise(vec2(iTime*.1));
+    float n = 3.14*noise(vec2(u_time*.1));
     vec3 lp = vec3(cos(n),sin(2.*n), .5);
     // light direction
     vec3 ld = normalize(lp - hit);
@@ -59,5 +63,5 @@ void main() {
     vec3 color = ambient + li * ( diffuse * max(dot(ld,normal),0. ) +  1. * pow( max( dot(re,vd) ,0.) ,32.) );
 
     // gamma correction
-    oPixel = vec4( pow(clamp(color,.0,1.),vec3(.456) ) ,1.);   
+    pixel = vec4( pow(clamp(color,.0,1.),vec3(.456) ) ,1.);   
 }

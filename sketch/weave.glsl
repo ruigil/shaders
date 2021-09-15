@@ -1,10 +1,16 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+#version 300 es
+precision highp float;
 
+uniform vec2 u_resolution;
+uniform float u_time;
+
+#include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
 
+out vec4 pixel;
 void main() {
-    vec2 r = (ref * (3. + sin(iTime))) * rot(radians(sin(iTime*.2)*45.));
+
+    vec2 r = (ref(UV, u_resolution) * 2.  * (3. + sin(u_time))) * rot(radians(sin(u_time*.2)*45.));
 
     // create tiles and every other tile rotate the pattern 90 degrees
     r = mod(floor(r.x) + floor(r.y) , 2.) == 0. ? 
@@ -21,5 +27,5 @@ void main() {
         fill( sin((r.y-.707) *60.), .1, true) *
         smoothstep(1.,.0, abs(r.x));
 
-    oPixel = vec4( vec3(v), 1.0 );
+    pixel = vec4( vec3(v), 1.0 );
 } 

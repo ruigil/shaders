@@ -1,13 +1,18 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+#version 300 es
+precision highp float;
 
+uniform vec2 u_resolution;
+uniform float u_time;
+
+#include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
 #include '../utils/noise.glsl'
 #include '../utils/complex-math.glsl'
 
+out vec4 pixel;
 void main( void ) {
 
-    vec2 r = ref;
+    vec2 r = ref(UV, u_resolution);
 
     // there is absolutely no physic involved in this shader !
     // to prove that a good illusion is almost as good as the real thing :)
@@ -25,7 +30,7 @@ void main( void ) {
     vec2 p = toPolar(r);
 
     // a warp constant modulated by a sine oscilator
-    float warp = .19 * abs(sin(iTime*.1));
+    float warp = .19 * abs(sin(u_time*.1));
     // here we 'warp' space by changing the exponent of the radial axis
     p = vec2(pow(p.x,.2 - warp), p.y/6.283) * 100.;
 
@@ -36,12 +41,12 @@ void main( void ) {
     for(float i=1.; i<5.; i++) {
         // each with a different offset in both axis
         // to create a parallax ilusion
-        p -= vec2(iTime, .3);
+        p -= vec2(u_time, .3);
     
         float star = 
             // the star is a simple circle
             // we just draw one star, in a fractional space
-            fill(circle(fract(p) - .5, .1), true) *
+            fill(circle(fract(p) - .5, .1), EPS, true) *
             // this random function control the amount of stars
             step(hash(floor(p)), .05 ); 
     
@@ -52,5 +57,5 @@ void main( void ) {
     // make stars close to the center dimmer
     f *= length(r) * 4.;
 
-    oPixel = vec4(vec3(f),1.);
+    pixel = vec4(vec3(f),1.);
 }

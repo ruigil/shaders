@@ -1,13 +1,10 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+#version 300 es
+precision highp float;
 
 // From Pixel Spirit Deck
 // https://pixelspiritdeck.com/
 
-
-void main() { 
-
-    float f = 1.;
-        
-    oPixel = vec4(vec3(f), 1.);
+out vec4 pixel;
+void main() {         
+    pixel = vec4(1.);
 }

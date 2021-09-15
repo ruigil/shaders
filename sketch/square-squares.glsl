@@ -1,14 +1,20 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+#version 300 es
+precision highp float;
 
+uniform vec2 u_resolution;
+uniform float u_time;
+
+#include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
 #include '../utils/noise.glsl'
+#include '../utils/shaping-functions.glsl'
 
+out vec4 pixel;
 void main() {
     // this is a remix of a generative artwork by William J. Kolomyjec
     // http://dada.compart-bremen.de/item/agent/644
 
-    vec2 r = ref*6.;
+    vec2 r = ref(UV, u_resolution) * 12.;
 
     // repeat space in both directions
     vec2 r1 = fract(r) - .5;
@@ -16,7 +22,7 @@ void main() {
     vec2 r2 = floor(r) * 36.;
 
     // draw a white square
-    float f = fill(rect(r1, vec2(.8)),true);
+    float f = fill(rect(r1, vec2(.8)), EPS, true);
 
     // random number of inner squares
     float ns = 2. + floor(4.* hash(r2));
@@ -25,14 +31,14 @@ void main() {
         float size = (.1 + (.1*s)) * (.7/(ns*.1));
   
         // center offset of the inner square
-        vec2 center = (.35 - size * .5) * vec2(noise(r2+iTime)-.5,noise(r2.yx+iTime)-.5);
+        vec2 center = (.35 - size * .5) * vec2(noise(r2 + u_time)-.5,noise(r2.yx + u_time)-.5);
   
         // clip a rect inside with the calculated size and offset 
-        f *= stroke(rect(r1 - center, vec2( size  )), .03, false);
+        f *= stroke(rect(r1 - center, vec2( size  )), .03, EPS, false);
     }
 
     // clip a border of the frame
-    f *= fill(rect(r, vec2(9.75) ), true);
+    f *= fill(rect(r, vec2(9.75) ), EPS, true);
 
-    oPixel = vec4(vec3(f),1.);
+    pixel = vec4(vec3(f),1.);
 }

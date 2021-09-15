@@ -1,3 +1,12 @@
+vec2 ref(vec2 uv, vec2 res) {
+    vec2 factor = ( res.x < res.y ) ? vec2(1., res.y/res.x) : vec2(res.x/res.y, 1.);
+    return (uv*factor)-(factor*.5);
+}
+vec2 unref(vec2 ref, vec2 res) {
+    vec2 factor = ( res.x < res.y ) ? vec2(1., res.y/res.x) : vec2(res.x/res.y, 1.);
+    return (ref+(factor*.5))/factor;
+}
+
 // defines a sdf for a circle
 float circle(vec2 r, float radius) { return length(r) - radius; }
 
@@ -51,20 +60,20 @@ float signz(float v) { return v == 0. ? 1. : sign(v); }
 float xor(float f1, float f2) { return abs(f1-f2); }
 
 // smoothstep antialias with fwidth
-float ssaa(float v) { return smoothstep(-1. ,1. ,v / fwidth(v) ); }
+//float ssaa(float v) { return smoothstep(-1. ,1. ,v / fwidth(v) ); }
 
 // smoothstep antialias with epsilon 
 float ssaae(float v, float e) { return smoothstep(0. ,e , v ); }
 
 // stroke an sdf 'd', with a width 'w', and a fill 'f' 
-float stroke(float d, float w, bool f) {  return abs(ssaae(abs(d)-w*.5, 2./iResolution.x) - float(f)); }
+//float stroke(float d, float w, bool f) {  return abs(ssaae(abs(d)-w*.5, 2./iResolution.x) - float(f)); }
 
 // stroke an sdf 'd', with a width 'w', and a fill 'f' 
 // this overload version allows an epsilon when fwidth is unsuitable
 float stroke(float d, float w, float e, bool f) {  return abs(ssaae(abs(d)-w*.5,e) - float(f)); }
 
 // fills an sdf 'd', and a fill 'f'. false for the fill means inverse 
-float fill(float d, bool f) { return abs(ssaae(d,1./iResolution.x) - float(f)); }
+//float fill(float d, bool f) { return abs(ssaae(d,1./iResolution.x) - float(f)); }
 
 // fills an sdf 'd', and a fill 'f'. false for the fill means inverse 
 // this overload version allows an epsilon when fwidth is unsuitable

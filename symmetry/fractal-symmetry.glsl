@@ -1,12 +1,17 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+#version 300 es
+precision highp float;
 
+uniform vec2 u_resolution;
+uniform float u_time;
+
+#include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
 #include '../utils/noise.glsl'
 
+out vec4 pixel;
 void main() {
     // reference frame
-    vec2 r = ref;
+    vec2 r = ref(UV, u_resolution);
 
     // float accumulator
     float f = 0.;
@@ -27,13 +32,13 @@ void main() {
         // abs to introduce a symmetry of the axis
         r = abs(2.*fract(r)-1.) * 
             // a rotation that varies in time and in the iteration
-            rot(radians(90.*sin( (iTime*.2) + i/6.283) ) );
+            rot(radians(90.*sin( (u_time*.2) + i/6.283) ) );
 
         // accumulate exp in the y axis multipling by a value to modulate
         // the accumulation. If we iterate more, this value must be bigger.
         f += exp(-abs(r.y) * 10. );
     }
 
-    oPixel = vec4(vec3(f),1.);
+    pixel = vec4(vec3(f),1.);
  }
 

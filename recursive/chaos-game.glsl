@@ -1,12 +1,18 @@
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
-#define tex (gl_FragCoord.xy/iResolution.xy)
+#version 300 es
+precision highp float;
 
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
+uniform sampler2D u_buffer0;
+
+#include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
 #include '../utils/noise.glsl'
 
-#iChannel0 "self"
 
+#if defined(BUFFER_0)
+out vec4 pixel;
 void main() {
 
     // this is a demonstration of drawing a sierpinsky triangle, with
@@ -21,23 +27,23 @@ void main() {
     // of the last point between frames
 
     // reference frame
-    vec2 r = ref;
+    vec2 r = ref(UV, u_resolution) * 2.;
     // number of vertices
     float v = 3.;
     // the address in the texture that is used for memory.
-    vec2 mem = vec2(.5/iResolution.xy);
+    vec2 mem = vec2(.5/u_resolution.xy);
     // the result
     vec4 result = vec4(0.);
 
     // so if the texture address is the one that we reserved for memory, 
     // we calculate a new position and store it in the result
-    if (tex == mem)   {
+    if (UV == mem)   {
 
         // get the last point from memory
-        vec2 lp = texture(iChannel0,mem).rg;
+        vec2 lp = texture(u_buffer0,mem).rg;
         
         // get a random number btween 0 and the number of vertices-1
-        float rd = floor(hash(vec2(iTime+2.)) * v); 
+        float rd = floor(hash(vec2(u_time+2.)) * v); 
         
         // use it to get a vector between tha last point and the new vertice
         vec2 nv = vec2(cos(rd*(6.283/v)),sin(rd*(6.283/v))) - lp.xy;
@@ -51,17 +57,23 @@ void main() {
     // .. or else we draw a new point
     } else {
         // get the point from the memory
-        vec2 p = texture(iChannel0,mem).rg;
+        vec2 p = texture(u_buffer0,mem).rg;
         
         // draw a circle at the point position
         // and accumulate with the last texture frame
         float f  = max(
-                    fill(circle(r - p, .005), true),
-                    texture(iChannel0, tex).r
+                    fill(circle(r - p, .005),  EPS, true),
+                    texture(u_buffer0, UV).r
                 );
 
         result = vec4(vec3(f),1.);
     }
 
-    oPixel = result;
+    pixel = result;
 }
+#else
+out vec4 pixel;
+void main() {
+    pixel = vec4( texture(u_buffer0, UV).rgb, 1);
+}
+#endif

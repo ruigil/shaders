@@ -1,19 +1,23 @@
+#version 300 es
+precision highp float;
 
-#define oPixel gl_FragColor
-#define ref ((gl_FragCoord.xy - iResolution.xy *.5) / ( iResolution.x < iResolution.y ? iResolution.x : iResolution.y) * 2.) 
+uniform vec2 u_resolution;
+uniform float u_time;
 
+#include '../constants.glsl'
 #include '../utils/shaping-functions.glsl'
 #include '../utils/2d-utils.glsl'
 
 // squaring the circle...
 // using and easing function to animate
 // scale , position and rotation of objects.
+out vec4 pixel;
 void main() {
     
-    vec2 r = ref;
+    vec2 r = ref(UV, u_resolution);
 
     // the domain of easing function is [0,1]
-    float t = fract(iTime/4.);
+    float t = fract(u_time/4.);
 
     // a quadratic function to animate the size
     float size = .2 + .5 * abs(easePow(t,2.,modeOut)-.5);
@@ -31,12 +35,12 @@ void main() {
     mat2 r2 = rot(-er*6.283*2.); 
  
     float f = 
-        fill(circle(r, size * .5), true) *
-        stroke(circle(r, size * .2), size * .1, false) +
-        fill(rect((r + p1) * r1,vec2(size)), true) +
-        fill(rect((r - p1) * r1,vec2(size)), true) +
-        stroke(rect((r + p2) * r2,vec2(size)), size * .1, true) +
-        stroke(rect((r - p2) * r2,vec2(size)), size * .1, true);
+        fill(circle(r, size * .5), EPS, true) *
+        stroke(circle(r, size * .2), size * .1, EPS, false) +
+        fill(rect((r + p1) * r1,vec2(size)), EPS, true) +
+        fill(rect((r - p1) * r1,vec2(size)), EPS, true) +
+        stroke(rect((r + p2) * r2,vec2(size)), size * .1, EPS, true) +
+        stroke(rect((r - p2) * r2,vec2(size)), size * .1, EPS, true);
 
-    oPixel = vec4(vec3(f),1.);
+    pixel = vec4(vec3(f),1.);
 }

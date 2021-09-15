@@ -1,5 +1,5 @@
-#define oPixel gl_FragColor
-#define coord gl_FragCoord.xy
+#version 300 es
+precision highp float;
 
 
 // Pixel Spirit Deck
@@ -12,6 +12,7 @@
 // The function receives a pixel coordinate a must produce a color, (x,y) => color
 // Color is a 'vector' of 4 components (Red, Green, Blue, Alpha)
 // Values go from 0. to 1. This shader produces one opaque black pixel for every coordinate.
+out vec4 pixel;
 void main() {
-    oPixel = vec4(0., 0., 0., 1.);
+    pixel = vec4(0., 0., 0., 1.);
 }
