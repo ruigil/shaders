@@ -7,7 +7,7 @@ uniform vec2 u_resolution;
 #define EPS (1./ (u_resolution.x < u_resolution.y ? u_resolution.x : u_resolution.y ))
 
 // From Pixel Spirit Deck
-// https://pixelspiritdeck.com/
+// https://patriciogonzalezvivo.github.io/PixelSpiritDeck/
 
 float stroke(float f, float w, float i) { return abs(i - smoothstep(0., EPS, abs(f) - (w *.5) )); }
 float tri(vec2 r) { return max( dot( vec2(abs(r.x),r.y), vec2(.866,.5)), - r.y ) - .433; }

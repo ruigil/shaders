@@ -8,7 +8,7 @@ uniform vec2 u_resolution;
 #define PI 3.14159265359
 
 // From Pixel Spirit Deck
-// https://pixelspiritdeck.com/
+// https://patriciogonzalezvivo.github.io/PixelSpiritDeck/
 
 
 // You can build a vec3 with a single float, it will copy the value to the 3 channels, x,y,z

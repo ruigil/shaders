@@ -6,7 +6,7 @@ uniform vec2 u_resolution;
 #define ref ((gl_FragCoord.xy - u_resolution.xy *.5) / ( u_resolution.x < u_resolution.y ? u_resolution.x : u_resolution.y)) 
 
 // From Pixel Spirit Deck
-// https://pixelspiritdeck.com/
+// https://patriciogonzalezvivo.github.io/PixelSpiritDeck/
 
 // The 'abs' returns the absolute number, wich means that it will always return a positive number.
 // so .1 - abs(ref.x) will always be negative except when ref.x is lesser than .1

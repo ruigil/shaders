@@ -8,7 +8,7 @@ uniform vec2 u_resolution;
 #define EPS (1./ (u_resolution.x < u_resolution.y ? u_resolution.x : u_resolution.y ))
 
 // From Pixel Spirit Deck
-// https://pixelspiritdeck.com/
+// https://patriciogonzalezvivo.github.io/PixelSpiritDeck/
 
 // Lets create a signed distance function (sdf) for circles
 float circle(vec2 center, float radius) { return length(center) - radius; }

@@ -3,7 +3,7 @@ precision highp float;
 
 
 // Pixel Spirit Deck
-// https://pixelspiritdeck.com/
+// https://patriciogonzalezvivo.github.io/PixelSpiritDeck/
 
 
 // A pixel shader is a function executed for every pixel.

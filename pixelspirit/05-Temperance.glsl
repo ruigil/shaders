@@ -8,7 +8,7 @@ uniform vec2 u_resolution;
 #define PI 3.14159265359
 
 // From Pixel Spirit Deck
-// https://pixelspiritdeck.com/
+// https://patriciogonzalezvivo.github.io/PixelSpiritDeck/
 
 // To make a line at the zero boundary is quite useful so we make it a function called 'stroke'
 // that encapsultates this. We send as parameters the function value and the final width.

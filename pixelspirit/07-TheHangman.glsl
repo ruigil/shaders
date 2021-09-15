@@ -6,7 +6,7 @@ uniform vec2 u_resolution;
 #define ref ((gl_FragCoord.xy - u_resolution.xy *.5) / ( u_resolution.x < u_resolution.y ? u_resolution.x : u_resolution.y)) 
 
 // From Pixel Spirit Deck
-// https://pixelspiritdeck.com/
+// https://patriciogonzalezvivo.github.io/PixelSpiritDeck/
 
 float stroke(float f, float w) { return step( 0., (w *.5) - abs(f) ); }
 
