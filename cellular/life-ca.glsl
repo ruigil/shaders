@@ -4,7 +4,7 @@ precision highp float;
 uniform vec2 u_resolution;
 uniform vec2 u_mouse;
 uniform float u_time;
-uniform vec3 u_color;
+// buffer to keep the state of the simulation
 uniform sampler2D u_buffer0;
 
 #include '../constants.glsl'
@@ -16,7 +16,6 @@ uniform sampler2D u_buffer0;
 // Conway Game of Life 
 // https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
 
-
 // so we define a buffer that receives itself as an input texture, 
 // that we will use to keep the state of the simulation
 #if defined(BUFFER_0)
@@ -24,8 +23,8 @@ uniform sampler2D u_buffer0;
 float life(vec2 r) {
     vec2 current = floor( r*SIZE) + .5; // current cell
 
-    // we read the previous state from the texture buffer
-    float alive = 1.-texture(u_buffer0, fract(unref( (current/SIZE), u_resolution )) ).r; // is it alive ?
+    // we read the previous state from the texture buffer, to see if the cell is alive... 
+    float alive = 1.-texture(u_buffer0, fract(unref( (current/SIZE), u_resolution )) ).r; 
     float nb = 0.; // neighbours
 
     // we count the neighbours...
@@ -66,7 +65,7 @@ void main() {
     pixel = vec4(vec3(1.-l),1.); 
 }
 #else
-// we just copy the texture to the screen...
+// we just copy the texture buffer to the screen...
 out vec4 pixel;
 void main() {
     pixel = vec4(texture(u_buffer0,UV).rgb,1.);
