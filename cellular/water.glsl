@@ -33,7 +33,7 @@ void main() {
 
     // add random rain
     if (hash(33.*t + u_time) < .001) {
-        v += smoothstep(.1,.0,length( hash22(t*33.) ))*5.;
+        v += smoothstep(.1,.0,length( hash2(t*33.) ))*5.;
     }
 
     // current state
