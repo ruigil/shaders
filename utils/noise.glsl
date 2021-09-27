@@ -1,147 +1,127 @@
-// https://www.shadertoy.com/view/4djSRW
-// Hash without Sine
-// MIT License...
-/* Copyright (c)2014 David Hoskins.
+/*************************************************************************************************
+ * Mark Jarzynski and Marc Olano, Hash Functions for GPU Rendering, 
+ * Journal of Computer Graphics Techniques (JCGT), vol. 9, no. 3, 21-38, 2020
+ * Available online http://jcgt.org/published/0009/03/02/
+ *
+ * https://www.pcg-random.org/
+ *
+ * https://www.shadertoy.com/view/XlGcRh
+ */    
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.*/
-
-//----------------------------------------------------------------------------------------
-//  1 out, 1 in...
-float hash(float p) {
-    p = fract(p * .1031);
-    p *= p + 33.33;
-    p *= p + p;
-    return fract(p);
+uint pcg(uint v) {
+	uint state = v * 747796405u + 2891336453u;
+	uint word = ((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u;
+	return (word >> 22u) ^ word;
 }
 
-//----------------------------------------------------------------------------------------
-//  1 out, 2 in...
-float hash(vec2 p) {
-    //p += .5;
-	vec3 p3  = fract(vec3(p.xyx) * .1031);
-    p3 += dot(p3, p3.yzx + 33.33);
-    return fract((p3.x + p3.y) * p3.z);
+uvec2 pcg2d(uvec2 v) {
+    v = v * 1664525u + 1013904223u;
+
+    v.x += v.y * 1664525u;
+    v.y += v.x * 1664525u;
+
+    v = v ^ (v>>16u);
+
+    v.x += v.y * 1664525u;
+    v.y += v.x * 1664525u;
+
+    v = v ^ (v>>16u);
+
+    return v;
 }
 
-//----------------------------------------------------------------------------------------
-//  1 out, 3 in...
-float hash(vec3 p3) {
-	p3  = fract(p3 * .1031);
-    p3 += dot(p3, p3.yzx + 33.33);
-    return fract((p3.x + p3.y) * p3.z);
+uvec3 pcg3d(uvec3 v) {
+
+    v = v * 1664525u + 1013904223u;
+
+    v.x += v.y*v.z;
+    v.y += v.z*v.x;
+    v.z += v.x*v.y;
+
+    v ^= v >> 16u;
+
+    v.x += v.y*v.z;
+    v.y += v.z*v.x;
+    v.z += v.x*v.y;
+
+    return v;
 }
 
-//----------------------------------------------------------------------------------------
-//  2 out, 1 in...
-vec2 hash21(float p) {
-	vec3 p3 = fract(vec3(p) * vec3(.1031, .1030, .0973));
-	p3 += dot(p3, p3.yzx + 33.33);
-    return fract((p3.xx+p3.yz)*p3.zy);
+uvec3 pcg3d16(uvec3 v) {
+    v = v * 12829u + 47989u;
 
+    v.x += v.y*v.z;
+    v.y += v.z*v.x;
+    v.z += v.x*v.y;
+
+    v.x += v.y*v.z;
+    v.y += v.z*v.x;
+    v.z += v.x*v.y;
+
+	v >>= 16u;
+
+    return v;
 }
 
-//----------------------------------------------------------------------------------------
-///  2 out, 2 in...
-vec2 hash22(vec2 p) {
-	vec3 p3 = fract(vec3(p.xyx) * vec3(.1031, .1030, .0973));
-    p3 += dot(p3, p3.yzx+33.33);
-    return fract((p3.xx+p3.yz)*p3.zy);
-
-}
-
-//----------------------------------------------------------------------------------------
-///  2 out, 3 in...
-vec2 hash23(vec3 p3) {
-	p3 = fract(p3 * vec3(.1031, .1030, .0973));
-    p3 += dot(p3, p3.yzx+33.33);
-    return fract((p3.xx+p3.yz)*p3.zy);
-}
-
-//----------------------------------------------------------------------------------------
-//  3 out, 1 in...
-vec3 hash31(float p) {
-   vec3 p3 = fract(vec3(p) * vec3(.1031, .1030, .0973));
-   p3 += dot(p3, p3.yzx+33.33);
-   return fract((p3.xxy+p3.yzz)*p3.zyx); 
-}
-
-
-//----------------------------------------------------------------------------------------
-///  3 out, 2 in...
-vec3 hash32(vec2 p) {
-	vec3 p3 = fract(vec3(p.xyx) * vec3(.1031, .1030, .0973));
-    p3 += dot(p3, p3.yxz+33.33);
-    return fract((p3.xxy+p3.yzz)*p3.zyx);
-}
-
-//----------------------------------------------------------------------------------------
-///  3 out, 3 in...
-vec3 hash33(vec3 p3) {
-	p3 = fract(p3 * vec3(.1031, .1030, .0973));
-    p3 += dot(p3, p3.yxz+33.33);
-    return fract((p3.xxy + p3.yxx)*p3.zyx);
-
-}
-
-//----------------------------------------------------------------------------------------
-// 4 out, 1 in...
-vec4 hash41(float p) {
-	vec4 p4 = fract(vec4(p) * vec4(.1031, .1030, .0973, .1099));
-    p4 += dot(p4, p4.wzxy+33.33);
-    return fract((p4.xxyz+p4.yzzw)*p4.zywx);
+uvec4 pcg4d(uvec4 v) {
+    v = v * 1664525u + 1013904223u;
     
+    v.x += v.y*v.w;
+    v.y += v.z*v.x;
+    v.z += v.x*v.y;
+    v.w += v.y*v.z;
+    
+    v ^= v >> 16u;
+    
+    v.x += v.y*v.w;
+    v.y += v.z*v.x;
+    v.z += v.x*v.y;
+    v.w += v.y*v.z;
+    
+    return v;
 }
 
-//----------------------------------------------------------------------------------------
-// 4 out, 2 in...
-vec4 hash42(vec2 p) {
-	vec4 p4 = fract(vec4(p.xyxy) * vec4(.1031, .1030, .0973, .1099));
-    p4 += dot(p4, p4.wzxy+33.33);
-    return fract((p4.xxyz+p4.yzzw)*p4.zywx);
-
+// these function use the unsigned int pcg hash above.
+// they expect a positive seed, or else the results are symmetric and return [0,1]
+// 1 -> 1
+float hash( float p ) {
+    return float( pcg( uint( abs(p) * 10000.) )) * (1.0/float(0xffffffffu)) ;
 }
-
-//----------------------------------------------------------------------------------------
-// 4 out, 3 in...
-vec4 hash43(vec3 p) {
-	vec4 p4 = fract(vec4(p.xyzx)  * vec4(.1031, .1030, .0973, .1099));
-    p4 += dot(p4, p4.wzxy+33.33);
-    return fract((p4.xxyz+p4.yzzw)*p4.zywx);
+// 2 -> 1
+float hash( vec2 p ) {
+    return float( pcg2d( uvec2( abs(p) * 10000.) ) ) * (1.0/float(0xffffffffu)) ;
 }
-
-//----------------------------------------------------------------------------------------
-// 4 out, 4 in...
-vec4 hash44(vec4 p4) {
-	p4 = fract(p4  * vec4(.1031, .1030, .0973, .1099));
-    p4 += dot(p4, p4.wzxy+33.33);
-    return fract((p4.xxyz+p4.yzzw)*p4.zywx);
+// 3 -> 1
+float hash( vec3 p ){
+    return float( pcg3d( uvec3( abs(p) * 10000.) ) ) * (1.0/float(0xffffffffu)) ;
+}
+// 4 -> 1
+float hash( vec4 p ){
+    return float( pcg4d( uvec4( abs(p) * 10000.) ) ) * (1.0/float(0xffffffffu)) ;
+}
+// 2 -> 2
+vec2 hash2( vec2 p ) {
+    return vec2( pcg2d( uvec2( abs(p) * 10000.) ) ) * (1.0/float(0xffffffffu)) ;
+}
+// 3 -> 3
+vec3 hash3( vec3 p ) {
+    return vec3( pcg3d( uvec3( abs(p) * 10000.) ) ) * (1.0/float(0xffffffffu)) ;
+}
+// 4 -> 4
+vec4 hash4( vec4 p ) {
+    return vec4( pcg4d( uvec4( abs(p) * 10000.) ) ) * (1.0/float(0xffffffffu)) ;
 }
 
 
 // value noise in 2 dimension
-// return betweem 0 and 1
-float noise( in vec2 p )
-{
+// https://www.shadertoy.com/view/lsf3WH
+// returns [0,1]
+float vnoise( vec2 p ) {
     vec2 i = floor( p );
     vec2 f = fract( p );
 	
-	vec2 u = f*f*(3.0-2.0*f);
+    // quintic interpolation
+    vec2 u = f*f*f*(f*(f*6.0-15.0)+10.0);
 
     return mix( mix( hash( i + vec2(0.0,0.0) ), 
                      hash( i + vec2(1.0,0.0) ), u.x),
@@ -149,37 +129,95 @@ float noise( in vec2 p )
                      hash( i + vec2(1.0,1.0) ), u.x), u.y);
 }
 
-// value noise in 3 dimensions
-// return between 0 and 1
-float noise( in vec3 x ) {
-    vec3 i = floor(x);
-    vec3 f = fract(x);
-    f = f*f*(3.0-2.0*f);
+// value noise in 3 dimension
+// https://www.shadertoy.com/view/4sfGzS
+// returns [0,1]
+
+float vnoise( vec3 p ) {
+    vec3 i = floor( p );
+    vec3 f = fract( p );
+
+    // quintic interpolation
+    vec3 u = f*f*f*(f*(f*6.0-15.0)+10.0);
 	
-    return mix(mix(mix( hash(i+vec3(0,0,0)), 
-                        hash(i+vec3(1,0,0)),f.x),
-                   mix( hash(i+vec3(0,1,0)), 
-                        hash(i+vec3(1,1,0)),f.x),f.y),
-               mix(mix( hash(i+vec3(0,0,1)), 
-                        hash(i+vec3(1,0,1)),f.x),
-                   mix( hash(i+vec3(0,1,1)), 
-                        hash(i+vec3(1,1,1)),f.x),f.y),f.z);
+    return mix(mix(mix( hash( i + vec3(0,0,0)), 
+                        hash( i + vec3(1,0,0)), u.x),
+                   mix( hash( i + vec3(0,1,0)), 
+                        hash( i + vec3(1,1,0)), u.x), u.y),
+               mix(mix( hash( i + vec3(0,0,1)), 
+                        hash( i + vec3(1,0,1)), u.x),
+                   mix( hash( i + vec3(0,1,1)), 
+                        hash( i + vec3(1,1,1)), u.x), u.y), u.z);
+}
+
+// default noise is value noise
+float noise( vec2 p) { return vnoise(p); }
+float noise( vec3 p) { return vnoise(p); }
+
+// returns a normalized random vector
+// 2 -> 2
+vec2 grad( vec2 s ) {
+    float f = hash( s.x + hash( s.y ) ) * 6.28;
+
+    return vec2( cos(f), sin(f) );
+}
+// returns a normalized random vector
+// 3 -> 3
+vec3 grad( vec3 s ) {
+    float f = hash( s.x + hash( s.y + hash( s.z )) ) * 6.28;
+
+    return vec3( cos(f), sin(f), cos(f) * sin(f) );
+}
+// gradient noise in 2 dimensions
+// https://www.shadertoy.com/view/XdXGW8
+// returns [-1,1]
+float gnoise( vec2 p ) {
+     vec2 i = floor( p );
+     vec2 f = fract( p );
+	
+    // quintic interpolation
+    vec2 u = f*f*f*(f*(f*6.0-15.0)+10.0);
+
+    return mix( mix( dot( grad( i + vec2(0,0) ), f - vec2(0.0,0.0) ), 
+                     dot( grad( i + vec2(1,0) ), f - vec2(1.0,0.0) ), u.x),
+                mix( dot( grad( i + vec2(0,1) ), f - vec2(0.0,1.0) ), 
+                     dot( grad( i + vec2(1,1) ), f - vec2(1.0,1.0) ), u.x), u.y);
+}
+
+// gradient noise in 3 dimensions
+// https://www.shadertoy.com/view/Xsl3Dl
+// returns [-1,1]
+float gnoise( in vec3 p ) {
+    vec3 i = floor( p );
+    vec3 f = fract( p );
+	
+    // quintic interpolation
+    vec3 u = f*f*f*(f*(f*6.0-15.0)+10.0);
+
+    return mix( mix( mix( dot( grad( i + vec3(0.0,0.0,0.0) ), f - vec3(0.0,0.0,0.0) ), 
+                          dot( grad( i + vec3(1.0,0.0,0.0) ), f - vec3(1.0,0.0,0.0) ), u.x),
+                     mix( dot( grad( i + vec3(0.0,1.0,0.0) ), f - vec3(0.0,1.0,0.0) ), 
+                          dot( grad( i + vec3(1.0,1.0,0.0) ), f - vec3(1.0,1.0,0.0) ), u.x), u.y),
+                mix( mix( dot( grad( i + vec3(0.0,0.0,1.0) ), f - vec3(0.0,0.0,1.0) ), 
+                          dot( grad( i + vec3(1.0,0.0,1.0) ), f - vec3(1.0,0.0,1.0) ), u.x),
+                     mix( dot( grad( i + vec3(0.0,1.0,1.0) ), f - vec3(0.0,1.0,1.0) ), 
+                          dot( grad( i + vec3(1.0,1.0,1.0) ), f - vec3(1.0,1.0,1.0) ), u.x), u.y), u.z );
 }
 
 // fractal noise with a 2d seed
-float fbm ( vec2 r ) {
-    float f = 0.0;
-    r *= 8.0;
-    mat2 m = mat2( 1.6,  1.2, -1.2,  1.6 );
-    f  = 0.5000*noise( r ); r = m*r;
-    f += 0.2500*noise( r ); r = m*r;
-    f += 0.1250*noise( r ); r = m*r;
-    f += 0.0625*noise( r ); r = m*r;
+float fbm(vec2 p) {
 
+    p *= 8.0;
+    mat2 m = mat2( 1.6,  1.2, -1.2,  1.6 );
+    float f  = 0.;
+    f += 0.5000*noise( p ); p = m*p;
+    f += 0.2500*noise( p ); p = m*p;
+    f += 0.1250*noise( p ); p = m*p;
+    f += 0.0625*noise( p ); p = m*p;
     return f;
 }
 
-// fractal noise with a 2d seed
+// fractal noise with a 3d seed
 float fbm ( vec3 r ) {
     float f = 0.0;
     r *= 8.0;
