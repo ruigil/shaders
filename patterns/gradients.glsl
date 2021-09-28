@@ -8,6 +8,9 @@ uniform vec2 u_mouse;
 #include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
 
+
+// a simple way to create a color gradient, with an indexable color from 0 to 1
+// https://www.shadertoy.com/view/ll2GD3
 vec3 gradient(vec3 brightness, vec3 saturation, vec3 frequency, vec3 offset, float t ) {
     return clamp(brightness + saturation * cos( 6.28318* (frequency * t + offset ) ), 0., 1.);
 }
@@ -78,8 +81,9 @@ vec3 getGrad(float f) {
 
 out vec4 pixel;
 void main() {
-    vec2 r = ref(UV,u_resolution);
 
+    // if you pass your mouse over the gradient
+    // the three first rows show the components red, green, blue of the graient
     vec2 m = u_mouse/u_resolution;
 
     float grads = 16.;
