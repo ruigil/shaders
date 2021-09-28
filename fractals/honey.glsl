@@ -26,7 +26,7 @@ void main() {
         lr = modpolar(lr*2.,6.,radians(60.)) - vec2(.0,1.);
     }
 
-    // in the last transformation we just draw one shape.
+    // in the last transformation we just draw one hexagon.
     float v = stroke( hex(lr, .5), .1 , EPS, true);
 
     pixel = vec4(vec3(v),1.);

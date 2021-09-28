@@ -22,6 +22,7 @@ void main() {
     // with start with a normalized reference frame
     vec2 lr = r;
     for (int i=0; i<n; i++) {
+        // the fold operation is a symmetry along an arbitrary axis
         lr = fold(abs(lr*3.),radians(45.))-vec2(1.,.5);
         lr = vec2(lr.x,abs(lr.y)-.5);
     }
