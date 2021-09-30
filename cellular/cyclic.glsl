@@ -20,52 +20,53 @@ uniform sampler2D u_buffer0;
 // repeating the cycle.
 // https://en.wikipedia.org/wiki/Cyclic_cellular_automaton
 #if defined(BUFFER_0)
-float cyclic(vec2 r, float size, float ntypes) {
-    vec2 current = floor(r * floor(size) ) + .5;  ; // current cell
+float cyclic(sampler2D t, vec2 p, float ntypes, float scale) {
     
     // current type
-    float type = texture(u_buffer0, fract(unref(current/size, u_resolution)) ).r;
+    float type = texture(t, p ).r;
     // count successors
     float cs = 0.;
 
     // the sucessor of this type.
     float successor = mod( floor(type * (ntypes+1.)) + 1., ntypes);
     
-    // count for neighbors successors
-    for(int i= -1; i <= 1; i += 1) {
-        for(int j= -1; j <= 1; j += 1) {
-            // what is the neighbor type ?
-            float nt = texture(u_buffer0, fract( unref((current + vec2(i,j) ) / size, u_resolution )) ).r;
-            // if it is a successor add it to the count.
-            cs +=  float( floor(nt * (ntypes+1.)) == successor);   
-        } 
-    }
+    // check the region of 8+1 pixels around this one.  
+    for(int i=0; i<9; i++) {
+        vec2 offset = ( vec2( (i/3) - 1 , (i%3) - 1 ) * PIXEL_SIZE * scale  );
+        float nt = texture(t, fract(p + offset) ).r;
+        // if it is a successor add it to the count.
+        cs +=  float( floor(nt * (ntypes+1.)) == successor);   
+    } 
     
     // if the cell has more than one successor, then it becomes 
     // the successor normalized, or else it stays the same type.
     return cs >= 1. ? (successor/ntypes) : type;
 }
 
+
 out vec4 pixel; 
 void main() {
 
-    // size of the simulation
-    float size = 400.;
+    // scale of the simulation
+    float scale = 1.;
     // number of types
-    float ntypes = 24.;
+    float ntypes = 32.;
 
-    // reference frame [-0.5,0.5] with corrected aspect ratio
-    vec2 rf = ref(UV, u_resolution);
+    // XY is the coodinate of the pixel gl_FragCoord.xy
+    // but because coordinates are for the middle of the pixel, 
+    // they are 1.5, 2.5, 3.5,... we need to subtract .5 and add it afterwards.
+    vec2 uv = ( (floor( (XY - .5) / scale ) * scale ) + .5) / R;
     
     // every 15 seconds restart the simulation
-    float c =  mod(floor(u_time),15.) == 0. ? 
+    float c =  mod(floor(T),30.) == 0. ? 
         // initialized a random cell 
-        floor(hash(floor(u_time) + floor(rf*size)+400.)*ntypes)/ntypes : 
+        floor(hash(floor(T) + floor(uv*R)+R) * ntypes)/ntypes : 
         // perform the simulation
-        cyclic(rf, size, ntypes);
+        cyclic(u_buffer0, uv, ntypes, scale);
 
     pixel = vec4(vec3(c),1.); 
 }
+
 #else
 // we just copy the texture buffer to the screen
 // and apply a gradient to the types...
