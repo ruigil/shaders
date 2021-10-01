@@ -57,9 +57,9 @@ void main() {
     // add it afterwards with the correct scale
     vec2 p = ( (floor( (XY - .5) / scale ) * scale )) / R;
 
+    // add half pixel
     p += (PIXEL_SIZE * scale * .5);
-    // if it is the first line, apply the rule110 
-    // or else slide the texture the offset
+
     float r110 =  
         p.y >= 1. - PIXEL_SIZE.y * scale ? // is it the first line ?
         mod(T, 30.) < .1 ? // 30 seconds have passed ?
