@@ -46,6 +46,7 @@ float rule110(sampler2D t, vec2 p, float scale) {
     return float(result);
 }
 
+
 out vec4 pixel;
 void main() {
     // the scale of the pixel
