@@ -89,25 +89,27 @@ void main() {
     //float kill = 0.051;
 
     // the scale of the simulation is the size of pixels. 
-    float scale = 4.;
+    float scale = 5.;
 
     // XY is the coodinate of the pixel gl_FragCoord.xy
     // but because coordinates are for the middle of the pixel, 
-    // they are 1.5, 2.5, 3.5,... we need to subtract .5 and add it afterwards.
-    vec2 uv = ( (floor( (XY - .5) / scale ) * scale ) + .5) / R;
+    // they are 1.5, 2.5, 3.5,... we need to subtract .5 and add 
+    // it afterwards in the simulation with the correct scale.
+    vec2 uv = ( (floor( (XY - .5) / scale ) * scale ) ) / R;
 
     vec2 s = T < .1 ? 
         // init the field with random concentrations
         vec2( 1, gnoise(uv * 10.) ) :
         // reaction diffusion simulation 
-        rd(u_buffer0, uv, feed, kill, scale); 
+        rd(u_buffer0, uv + (PIXEL_SIZE * scale * .5) /* add half pixel*/, feed, kill, scale); 
 
     // distance to the mouse position
     float dist = length( (uv+.5) - mouse); 
     float radius = .05;
 
+
     // add a perturbation to the concentration with the mouse
-    s +=  vec2(.02,-.04) *  ( dist < radius ? 1. - dist * (1./radius) : 0.);
+    s +=  vec2(-.03,-.04) *  ( dist < radius ? 1. - dist * (1./radius) : 0.);
 
     pixel = vec4(vec3(s.r,s.g,0.),1.); 
 }
