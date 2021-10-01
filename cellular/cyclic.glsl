@@ -52,17 +52,18 @@ void main() {
     // number of types
     float ntypes = 32.;
 
-    // XY is the coodinate of the pixel gl_FragCoord.xy
+    // XY is the coordinate of the pixel gl_FragCoord.xy
     // but because coordinates are for the middle of the pixel, 
-    // they are 1.5, 2.5, 3.5,... we need to subtract .5 and add it afterwards.
-    vec2 uv = ( (floor( (XY - .5) / scale ) * scale ) + .5) / R;
+    // they are 1.5, 2.5, 3.5,... we need to subtract .5 and 
+    // add it afterwards with the correct scale
+    vec2 uv = ( (floor( (XY - .5) / scale ) * scale )) / R;
     
     // every 15 seconds restart the simulation
     float c =  mod(floor(T),30.) == 0. ? 
         // initialized a random cell 
         floor(hash(floor(T) + floor(uv*R)+R) * ntypes)/ntypes : 
         // perform the simulation
-        cyclic(u_buffer0, uv, ntypes, scale);
+        cyclic(u_buffer0, uv + (PIXEL_SIZE*scale*.5) /* add half pixel*/, ntypes, scale);
 
     pixel = vec4(vec3(c),1.); 
 }
