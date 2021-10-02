@@ -12,36 +12,37 @@ uniform float u_time;
 out vec4 pixel;
 void main() {
 
-    vec2 r = ref(UV, u_resolution) * 2.;
+    vec2 r = ref(UV, u_resolution) * 3. ;
     // mouse in normalized coordinates
     vec2 m = u_mouse/u_resolution;
     // controls the number of iterations
-    int n = int(floor(m.x*7.));
-
-    // initial translation with noise
-    r += vec2( (abs( noise(3. * r.yy)) - .5) *.1, .6);
+    int n = int(floor(m.x*8.));
 
     float f = 0.; // collect the result
 
     // for recursivity, just iterate 
     // a serie of transformations of the refrence frame
-    // before drawing...
+    r += vec2(.0,.5);
+    vec2 lr = r;
     for (int i = 0; i < n; i++) {
+        
+        lr -= vec2(.0,.35);
+        // noise to add variation to the angle of branches
+        float n1 = (gnoise(vec2(float(i),T*.3)));
+        float n2 = (gnoise(vec2(float(i*3+1),T*.4)));
+        
+        lr = lr.x > 0. ? 
+        // rotate, translate and scale
+            ((lr * rot(radians(35.+n1*10.)) ) + vec2(0., -.2)) * vec2(1.2+(n1*.5),1.5+(n2*.5)) : 
+            ((lr * rot(radians(-35.-n2*20.)) ) + vec2(0, -.2)) * vec2(1.3+(n2*.5),1.3+(n1*.5)); 
 
-        // add a branch with half y length offset
-        f += fill(rect(r - vec2(.0,.3), vec2(.1,.6)), EPS, true);
-        
-        // mirror in x, translate in y and scale
-        r = vec2(abs(r.x), r.y - .6) * 1.5;
-        
-        // rotate the reference frame for the next branch
-        r *= rot(radians(35.));
-        
-        // add a bit of noise to make it wave.
-        r -= vec2( noise(2.*r.yy ) * .1 , .0);
-        
+        // add the branch
+        f += fill(rect(lr + vec2(gnoise(lr*5.)* (float(i+1)*0.05) ,0.), vec2(.2,.7)), EPS, true);
         // and repeat...
     }
+
+    // add finally add the trunk
+    f += fill(rect(r + vec2(gnoise(r*5.)*.05 ,0.), vec2(.2,.7)), EPS, true);
 
     pixel = vec4(vec3(f),1.);
 }
