@@ -20,7 +20,7 @@ vec4 voronoi( in vec2 x) {
     for(int i = -1; i <= 1; i++ ) {
         for(int j = -1; j <= 1; j++ ) {
             vec2 nb = vec2(i,j);
-            vec2 p = nb - fr + hash22( fl + nb );
+            vec2 p = nb - fr + hash2( fl + nb );
             float d = dot(p,p);
             res = d < res.z ? vec4(p,d,res.w) : res;
         }
@@ -30,7 +30,7 @@ vec4 voronoi( in vec2 x) {
     for(int i = -1; i <= 1; i++ ) {
         for(int j = -1; j <= 1; j++ ) {
             vec2 nb = vec2(i,j);
-		    vec2 p = nb - fr + hash22( fl + nb );
+		    vec2 p = nb - fr + hash2( fl + nb );
 
             if( dot(res.xy - p, res.xy - p) >.0001 ) { // skip the same cell 
                 res.w = min(res.w, dot( 0.5*(res.xy+p), normalize(p-res.xy) ));
