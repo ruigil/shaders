@@ -57,12 +57,20 @@ void main() {
     // and substraction of chemical B.
 
     //holes
-    float feed = 0.039;
-    float kill = 0.058;
+    //float feed = 0.039;
+    //float kill = 0.058;
 
     // worms
     //float feed = 0.046;
     //float kill = 0.063;
+
+    // worms and loops
+    //float feed = 0.082;
+    //float kill = 0.06;
+
+    // Turing patterns
+    float feed = 0.042;
+    float kill = 0.059;
 
     // negatons
     //float feed = 0.046;
