@@ -30,23 +30,11 @@ uniform sampler2D u_buffer0;
 // that we will use to keep the state of the simulation
 #if defined(BUFFER_0)
 
-// apply a convolution with a specific kernel
-vec4 convolution(float[9] kernel, sampler2D t, vec2 p, float scale) {
-    vec4 value = vec4(0);
-    
-    for(int i=0; i<9; i++) {
-        vec2 offset = ( vec2( (i/3) - 1 , (i%3) - 1 ) * PIXEL_SIZE * scale  );
-        value += kernel[i] * texture(t, fract(p + offset) );
-    } 
-        
-    return value;
-}
-
 // gray-scott reaction-diffusion system
 vec2 rd(sampler2D t, vec2 p, float feed, float kill, float scale) {
 
     // convolution with a Laplace kernel with a 9 point stencil
-    vec2 laplace = convolution(K_LAPLACE9, t, p, scale).rg;
+    vec2 laplace = conv3x3(K_LAPLACE9, t, p, scale).rg;
     // chemicals A and B are stores in the r and g component of the texture
     vec2 ab = texture(t, p ).rg;
 
@@ -89,7 +77,7 @@ void main() {
     //float kill = 0.051;
 
     // the scale of the simulation is the size of pixels. 
-    float scale = 5.;
+    float scale = 2.;
 
     // XY is the coodinate of the pixel gl_FragCoord.xy
     // but because coordinates are for the middle of the pixel, 
@@ -109,7 +97,9 @@ void main() {
 
 
     // add a perturbation to the concentration with the mouse
-    s +=  vec2(-.03,-.04) *  ( dist < radius ? 1. - dist * (1./radius) : 0.);
+    s +=  vec2(.0,.01) *  ( dist < radius ? 1. - dist * (1./radius) : 0.);
+
+    //s -= vec2(0.0,.05) * fill(circle((uv-.5)+.2*vec2(cos(T*.5),sin(T*2.)), .05), EPS, true);
 
     pixel = vec4(vec3(s.r,s.g,0.),1.); 
 }
