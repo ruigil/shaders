@@ -1,8 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 
 #include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
@@ -11,7 +13,7 @@ uniform float u_time;
 out vec4 pixel;
 void main() {
     // reference frame
-    vec2 r = ref(UV, u_resolution);
+    vec2 r = ref(UV, R);
 
     // float accumulator
     float f = 0.;
@@ -32,7 +34,7 @@ void main() {
         // abs to introduce a symmetry of the axis
         r = abs(2.*fract(r)-1.) * 
             // a rotation that varies in time and in the iteration
-            rot(radians(90.*sin( (u_time*.2) + i/6.283) ) );
+            rot(radians(90.*sin( (T*.2) + i/6.283) ) );
 
         // accumulate exp in the y axis multipling by a value to modulate
         // the accumulation. If we iterate more, this value must be bigger.

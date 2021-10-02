@@ -1,9 +1,9 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform vec2 u_mouse;
-
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
 
 #include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
@@ -84,7 +84,7 @@ void main() {
 
     // if you pass your mouse over the gradient
     // the three first rows show the components red, green, blue of the graient
-    vec2 m = u_mouse/u_resolution;
+    vec2 m = M/R;
 
     float grads = 16.;
 

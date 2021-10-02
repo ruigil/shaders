@@ -1,9 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform vec2 u_mouse;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 
 #include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
@@ -39,7 +40,7 @@ void main() {
     float gs = 4.;
     
     // change scale of the reference frame
-    vec2 r = ref(UV,u_resolution) * 2. * gs;
+    vec2 r = ref(UV,R) * 2. * gs;
 
     // we get a coordinate for each grid cell
     vec2 cr = ceil(r);
@@ -70,7 +71,7 @@ void main() {
             float rf = 40. * (((gs-1.)-(cr.y-n.y)) / ((gs*2.)-2.) );
             
             // a rotated reference frame for the cell that we are caclculating
-            vec2 r2 = (fr + n) * rot( radians(rf * 2.* (noise(u_time + (cr-n))-.5)) );
+            vec2 r2 = (fr + n) * rot( radians(rf * 2.* (noise(T + (cr-n))-.5)) );
             
             // and we accumulate the values
             v = max(v, stroke(rect(r2, vec2(1.)), .04 , EPS, true) ) ;

@@ -1,9 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform float u_time;
-uniform vec2 u_mouse;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 uniform sampler2D u_buffer0;
 
 #include '../constants.glsl'
@@ -22,10 +23,10 @@ void main() {
     // the size of the reference frame
     float size = 40.;
 
-    vec2 m = u_mouse.xy/u_resolution.xy;
+    vec2 m = M/R;
 
     // the reference frame is between [-1,1] * size
-    vec2 r = ref(UV, u_resolution) * 2. * size;
+    vec2 r = ref(UV, R) * 2. * size;
     // the texture reference frame is between [0,1] * size
     vec2 t = UV * size;
 
@@ -37,7 +38,7 @@ void main() {
     float f = max(texture(u_buffer0,(t-offset) / size).r - 0.01,.0); 
 
     // the reference frame is deformed with a couple of oscillators
-    r += vec2(.0, (sin( r.x + u_time) + sin( .5 *r.x - u_time )) + 4.);    
+    r += vec2(.0, (sin( r.x + T) + sin( .5 *r.x - T )) + 4.);    
 
     // the final value
     f = min(

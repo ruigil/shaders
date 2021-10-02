@@ -1,8 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 uniform sampler2D u_buffer0;
 
 #include '../constants.glsl'
@@ -21,9 +23,9 @@ void main() {
     float size = 20.;
 
     // the reference frame is between [-1,1] * size
-    vec2 r = ref(UV, u_resolution) * size;
+    vec2 r = ref(UV, R) * size;
 
-    float tt = mod(floor(u_time*60.), 30.);
+    float tt = mod(floor(T*60.), 30.);
 
     // initialize the output value with the previous frame
     float f = texture(u_buffer0, UV).r; 

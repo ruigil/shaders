@@ -1,9 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform vec2 u_mouse;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 
 #include '../constants.glsl'
 #include '../utils/noise.glsl'
@@ -54,10 +55,10 @@ float heightmap(vec3 r) {
 void main() {
 
     // polar coordinate reference frame
-    vec2 r = toPolar(ref(UV, u_resolution) *.4 ) ;
+    vec2 r = toPolar(ref(UV, R) *.4 ) ;
     
     // noise sample reference frame
-    vec3 nr = vec3( toCarte(r), r.x - u_time*.05);
+    vec3 nr = vec3( toCarte(r), r.x - T*.05);
     // noise epsilon difference
     vec3 ne = vec3(toPolar(vec2(EPS, .0)),0.0);
     // moise scale

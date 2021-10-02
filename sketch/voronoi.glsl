@@ -1,8 +1,9 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
 
 #include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
@@ -48,10 +49,10 @@ void main() {
     // between random points on a grid
 
     // reference frame
-    vec2 r = ref(UV, u_resolution) * 6.;
+    vec2 r = ref(UV, R) * 6.;
 
     // noise scaling to animate
-    r *= 2. + noise(r*.3+u_time)*2. + sin(u_time);
+    r *= 2. + noise(r*.3+T)*2. + sin(T);
 
     // voronoi of the plane
     vec4 v = voronoi(r);

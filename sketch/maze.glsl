@@ -1,10 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform float u_time;
-uniform vec2 u_mouse;
-uniform sampler2D u_buffer0;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 
 #include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
@@ -13,7 +13,7 @@ uniform sampler2D u_buffer0;
 out vec4 pixel;
 void main() {
 
-    vec2 r = ref(UV, u_resolution);
+    vec2 r = ref(UV, R);
 
     // the size of the maze
     float grid = 30.;
@@ -22,7 +22,7 @@ void main() {
     // that returns 1 or -1 of a random function. 
     // this will give us flipped reference frame 
     // in the x axis with 50% probability 
-    vec2 m = fract(grid * vec2( signz(noise(u_time*.1 + floor(grid * r)) - .5) * r.x,  r.y ));
+    vec2 m = fract(grid * vec2( signz(noise(T*.1 + floor(grid * r)) - .5) * r.x,  r.y ));
 
     // draw a diagonal line
     float v = stroke(m.x - m.y, .1, .1, true);

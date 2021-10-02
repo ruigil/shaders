@@ -1,8 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 
 #include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
@@ -12,7 +14,7 @@ uniform float u_time;
 out vec4 pixel;
 void main( void ) {
 
-    vec2 r = ref(UV, u_resolution);
+    vec2 r = ref(UV, R);
 
     // there is absolutely no physic involved in this shader !
     // to prove that a good illusion is almost as good as the real thing :)
@@ -30,7 +32,7 @@ void main( void ) {
     vec2 p = toPolar(r);
 
     // a warp constant modulated by a sine oscilator
-    float warp = .19 * abs(sin(u_time*.1));
+    float warp = .19 * abs(sin(T*.1));
     // here we 'warp' space by changing the exponent of the radial axis
     p = vec2(pow(p.x,.2 - warp), p.y/6.283) * 100.;
 
@@ -41,7 +43,7 @@ void main( void ) {
     for(float i=1.; i<5.; i++) {
         // each with a different offset in both axis
         // to create a parallax ilusion
-        p -= vec2(u_time, .3);
+        p -= vec2(T, .3);
     
         float star = 
             // the star is a simple circle

@@ -1,15 +1,17 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 
 #include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
 
 out vec4 pixel;
 void main() {
-    vec2 r = ref(UV, u_resolution) * 8.;
+    vec2 r = ref(UV, R) * 8.;
     
     // an example of symmetry and recursivity
     // all is built from a single pattern

@@ -1,8 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 
 /*
 When you graph a real function y=f(x) you need a plane (2D). When you 
@@ -136,13 +138,13 @@ vec3 color(vec2 uv) {
    float r = length(uv);
     
    vec3 c = .5 * ( cos(a*vec3(2.,2.,1.) + vec3(.0,1.4,.4)) + 1. );
-   return c * smoothstep(1.,0.,abs(fract(log(r)-u_time*.1)-.5)) // modulus lines
-            * smoothstep(1.,0.,abs(fract((a*7.)/3.14+(u_time*.1))-.5)) // phase lines
+   return c * smoothstep(1.,0.,abs(fract(log(r)-T*.1)-.5)) // modulus lines
+            * smoothstep(1.,0.,abs(fract((a*7.)/3.14+(T*.1))-.5)) // phase lines
             * smoothstep(11.,0.,log(r)) // infinity fades to black
             * smoothstep(.5,.4,abs(fract(speed)-.5)); // scene switch
 }
 
 out vec4 pixel;
 void main() {
-   pixel = vec4( color( map( ref(UV, u_resolution ) ) ), 1.0 );
+   pixel = vec4( color( map( ref(UV, R ) ) ), 1.0 );
 }

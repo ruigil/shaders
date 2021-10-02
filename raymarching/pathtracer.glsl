@@ -1,9 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform vec2 u_mouse;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 
 #include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
@@ -150,8 +151,8 @@ vec3 shade(Ray ray, int depth) {
 }
 
 vec3 antialias(vec2 r) {
-    float ct = cos(u_time);
-    float st = sin(u_time);
+    float ct = cos(T);
+    float st = sin(T);
 
     vec3 eye =  vec3(ct, .5,-1.) * 2.;
     vec2 e = PIXEL_SIZE;
@@ -173,9 +174,9 @@ vec3 antialias(vec2 r) {
 out vec4 pixel;
 void main() {
 
-    vec2 r = ref(UV, u_resolution);
+    vec2 r = ref(UV, R);
     // we trace the ray, and shade the hit point to the eye
-    vec3 color = antialias(  r ); 
+    vec3 color = antialias( r ); 
 
     // gamma color correction
     pixel = vec4( gamma(color,2.2) ,1.);   

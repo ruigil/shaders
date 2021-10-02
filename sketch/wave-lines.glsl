@@ -1,8 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 
 #include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
@@ -11,11 +13,11 @@ uniform float u_time;
 out vec4 pixel;
 void main() {
 
-    vec2 r = ref(UV, u_resolution) * 20.;
+    vec2 r = ref(UV, R) * 20.;
 
     // adding an oscillator to the reference frame
     // two waves with diffrerent frequencies and offsets
-    r += vec2(0., sin(r.x + u_time) + sin(.5 * r.x - u_time) );
+    r += vec2(0., sin(r.x + T) + sin(.5 * r.x - T) );
 
     float f = 
         // the line is just a rect, repeated in the y

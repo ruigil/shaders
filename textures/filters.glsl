@@ -3,6 +3,7 @@ precision highp float;
 
 uniform vec2 u_resolution; // defined as R
 uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
 
 // you need to specify a texture in the settings.json
 // please check the vs code glsl canvas extension documentation

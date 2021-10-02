@@ -1,8 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 uniform sampler2D u_buffer0;
 
 #include '../constants.glsl'
@@ -16,7 +18,7 @@ uniform sampler2D u_buffer0;
 out vec4 pixel;
 void main() {
 
-    vec2 r = ref(UV, u_resolution) * 2.;
+    vec2 r = ref(UV, R) * 2.;
     // the texture reference frame is between [0,1] 
     vec2 t = UV ;
 
@@ -26,7 +28,7 @@ void main() {
 
     r += vec2(.0,.75);
     // the pulse is  perlin noise, modulated by a cosine
-    float pulse =  .5 * noise( vec2(r.x*20.,u_time*5.)) * max(0.,cos(3.*r.x));
+    float pulse =  .5 * noise( 100.+vec2(r.x*20.,T*5.)) * max(0.,cos(3.*r.x));
         
     // draw the new horizontal line
     v = min(1., v + stroke(r.y  - pulse,  .01, EPS, true));

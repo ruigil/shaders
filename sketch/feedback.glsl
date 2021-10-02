@@ -1,22 +1,23 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform vec2 u_mouse;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
+
 uniform sampler2D u_buffer0;
 
 #include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
 #include '../utils/noise.glsl'
 
-
 #if defined(BUFFER_0)
 out vec4 pixel;
 void main() {
 
-    vec2 r = ref(UV, u_resolution) * 2.;
-    float n = noise(r.yx - u_time);
+    vec2 r = ref(UV, R) * 2.;
+    float n = noise(r.yx - T);
 
     float f = xor(
             // for a never ending feedback the ratio must be smaller

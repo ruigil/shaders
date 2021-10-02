@@ -1,9 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform vec2 u_mouse;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 
 #include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
@@ -93,11 +94,11 @@ vec3 shade(vec3 eye, vec3 hit) {
 out vec4 pixel;
 void main() {
 
-    float ct = cos(u_time*.1);
-    float st = sin(u_time*.1);
+    float ct = cos(T*.1);
+    float st = sin(T*.1);
 
     vec3 eye =  vec3(ct, .0, st) * 2.; 
-    vec3 ray = setCamera(2. * ref(UV, u_resolution), eye, vec3(0.), radians(90.)  );
+    vec3 ray = setCamera(2. * ref(UV, R), eye, vec3(0.), radians(90.)  );
 
     vec3 color = shade(eye, trace(eye, ray) );
 

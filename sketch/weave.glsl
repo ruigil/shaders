@@ -1,8 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 
 #include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
@@ -10,7 +12,7 @@ uniform float u_time;
 out vec4 pixel;
 void main() {
 
-    vec2 r = (ref(UV, u_resolution) * 2.  * (3. + sin(u_time))) * rot(radians(sin(u_time*.2)*45.));
+    vec2 r = (ref(UV, R) * 2.  * (3. + sin(T))) * rot(radians(sin(T*.2)*45.));
 
     // create tiles and every other tile rotate the pattern 90 degrees
     r = mod(floor(r.x) + floor(r.y) , 2.) == 0. ? 

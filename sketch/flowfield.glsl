@@ -1,9 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform vec2 u_mouse;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 uniform sampler2D u_buffer0;
 
 #include '../constants.glsl'
@@ -22,17 +23,17 @@ void main() {
     // here a flowfield is contructed interpreting the value noise
     // between [0,1] to be an angle for the direction
 
-    vec2 r = ref(UV, u_resolution) * 3.;
+    vec2 r = ref(UV, R) * 2.;
 
     // we create a vector field
-    vec2 ff = vec2(.0,.005)*rot(radians(noise(vec3(r+u_time, u_time*.1)) * 360.) ); 
+    vec2 ff = vec2(.0,.005)*rot(radians(noise(vec3(r+T*.2, T*.1)) * 360.) ); 
 
     // we use the vector field to sample the texture feedback
     // and do a texture advection to generate flow
     float t = texture(u_buffer0,fract(UV+ff)).r-.02;
     
     // we use another noise field to add some white points as sources
-    float f = max(t,step(noise(vec3(r*155.,u_time*20.)),.1));
+    float f = max(t,step(noise(vec3(r*100.,T*20.)),.1));
 
     pixel = vec4(vec3(f),1.);   
 }

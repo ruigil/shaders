@@ -1,8 +1,9 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
 
 #include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
@@ -14,7 +15,7 @@ void main() {
     // this is a remix of a generative artwork by William J. Kolomyjec
     // http://dada.compart-bremen.de/item/agent/644
 
-    vec2 r = ref(UV, u_resolution) * 12.;
+    vec2 r = ref(UV, R) * 12.;
 
     // repeat space in both directions
     vec2 r1 = fract(r) - .5;
@@ -31,7 +32,7 @@ void main() {
         float size = (.1 + (.1*s)) * (.7/(ns*.1));
   
         // center offset of the inner square
-        vec2 center = (.35 - size * .5) * vec2(noise(r2 + u_time)-.5,noise(r2.yx + u_time)-.5);
+        vec2 center = (.35 - size * .5) * vec2(noise(r2 + T)-.5,noise(r2.yx + T)-.5);
   
         // clip a rect inside with the calculated size and offset 
         f *= stroke(rect(r1 - center, vec2( size  )), .03, EPS, false);

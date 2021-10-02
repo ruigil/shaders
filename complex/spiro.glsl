@@ -2,8 +2,10 @@
 
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 uniform sampler2D u_buffer0;
 
 #include '../constants.glsl'
@@ -15,7 +17,7 @@ uniform sampler2D u_buffer0;
 out vec4 pixel;
 void main() {
     
-    vec2 r = ref(UV, u_resolution) * 7.;
+    vec2 r = ref(UV, R) * 7.;
 
     vec2 fl = floor(r);
     r = fract(r)-.5;
@@ -35,7 +37,7 @@ void main() {
     // frame feedback
     float f = texture(u_buffer0, UV ).r; 
 
-    float t = u_time;
+    float t = T;
 
     // calculate the parametric curve
     for (int i=0; i<fos.length(); i++) 

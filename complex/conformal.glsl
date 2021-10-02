@@ -1,8 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 
 #include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
@@ -23,14 +25,14 @@ void main() {
     // and then distort the grid with the complex transform
 
     // the refrence frame
-    vec2 r = ref(UV,u_resolution) * 2.;
+    vec2 r = ref(UV,R) * 2.;
 
     // we transform the reference frame in polar coordinates
     vec2 z = toPolar(r);
 
     // a few variables for the animation
-    float ct = cos(u_time*.5);
-    float st = sin(u_time*.3);
+    float ct = cos(T*.5);
+    float st = sin(T*.3);
     float scale = 10. / 6.283;
 
     // the complex transform is a dipole
@@ -38,7 +40,7 @@ void main() {
     r = zdiv( zadd( z, 2. * vec2(ct,st) ), zsub( z, 2.*vec2(st, ct)));
 
     // we apply a log scale
-    r = vec2(log(r.x) - u_time*.5, r.y );
+    r = vec2(log(r.x) - T*.5, r.y );
     r *= scale;
 
     // we repeat the space and use an alternating sign
@@ -47,7 +49,7 @@ void main() {
     r = fract(r)-.5;
 
     float step = 6.283/10.;
-    float t = u_time;
+    float t = T;
     
     // and draw the pattern,
     // we draw the teeth 5 times. 1 for center

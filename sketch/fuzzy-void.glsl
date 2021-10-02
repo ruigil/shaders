@@ -1,10 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform vec2 u_mouse;
-uniform float u_time;
-uniform sampler2D u_buffer0;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 
 #include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
@@ -15,13 +15,13 @@ out vec4 pixel;
 void main() {
 
     // convert to polar
-    vec2 r = toPolar(ref(UV, u_resolution) * 2. ); 
+    vec2 r = toPolar(ref(UV, R) * 2. ); 
 
     // add two oscilators on the radial coordinate
     
-    vec2 ra = r + vec2(r.x + .1 * (sin(r.y * 2. + u_time) + sin(r.y * 1. - u_time) ),0.);
-    vec2 rg = r + vec2(r.x + .1 * (sin(r.y * 5. + u_time) + sin(r.y * 3. - u_time) ),0.);
-    vec2 rb = r + vec2(r.x + .1 * (sin(r.y * 3. + u_time) + sin(r.y * 5. - u_time) ),0.);
+    vec2 ra = r + vec2(r.x + .1 * (sin(r.y * 2. + T) + sin(r.y * 1. - T) ),0.);
+    vec2 rg = r + vec2(r.x + .1 * (sin(r.y * 5. + T) + sin(r.y * 3. - T) ),0.);
+    vec2 rb = r + vec2(r.x + .1 * (sin(r.y * 3. + T) + sin(r.y * 5. - T) ),0.);
     
     float red = fill(circle(toCarte(ra), 1.), EPS, true);
     float green = fill(circle(toCarte(rg), 1.), EPS, true);

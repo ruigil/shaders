@@ -1,8 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 
 #include '../constants.glsl'
 #include '../utils/shaping-functions.glsl'
@@ -14,10 +16,10 @@ uniform float u_time;
 out vec4 pixel;
 void main() {
     
-    vec2 r = ref(UV, u_resolution) * 2.;
+    vec2 r = ref(UV, R) * 2.;
 
     // the domain of easing function is [0,1]
-    float t = fract(u_time/4.);
+    float t = fract(T/4.);
 
     // a quadratic function to animate the size
     float size = .2 + .5 * abs(easePow(t,2.,modeOut)-.5);

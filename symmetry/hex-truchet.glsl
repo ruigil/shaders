@@ -1,8 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 
 #include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
@@ -39,14 +41,14 @@ void main() {
     // call the function that maps reference space to a hexagon tile
     // the xy component contains the reference of the point remapped
     // the zw component contains the hexagonal coordinates of the point.
-    vec4 r = lat6(ref(UV, u_resolution) * 20.);
+    vec4 r = lat6(ref(UV, R) * 20.);
 
     // use the hexagonal coordinates as a seed for noise to choose the pattern
-    float n = noise(r.zw+u_time*.01);
+    float n = noise(r.zw+T*.01);
 
     // rotate the reference by a random multiple of 60 degrees
     // So that the patterns are randomly rotated to add to the diversity
-    vec2 hr = r.xy * rot( radians(60. * floor(noise(r.zw+u_time*.01)*6.) ) );
+    vec2 hr = r.xy * rot( radians(60. * floor(noise(r.zw+T*.01)*6.) ) );
 
     // draw one of 4 rotated patterns with equal probability
     float f =

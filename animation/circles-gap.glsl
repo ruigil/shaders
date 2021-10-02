@@ -1,8 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 
 #include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
@@ -13,14 +15,14 @@ uniform float u_time;
 out vec4 pixel;
 void main() {
     
-    vec2 r = ref(UV, u_resolution) * 2.;
+    vec2 r = ref(UV, R) * 2.;
 
     float f = 0.; // result
 
     for (float i = 0.; i < 4.; i++) { // 4 circles
 
-        float t = fract( u_time / 4. ); // time domain
-        float n = noise( vec2(i , floor( (u_time / 4. ) + .5)) ); // noise dependent on time and index
+        float t = fract( T / 4. ); // time domain
+        float n = noise( vec2(i , floor( (T / 4. ) + .5)) ); // noise dependent on time and index
 
         f = max(f, 
                 // the circle with variable radius

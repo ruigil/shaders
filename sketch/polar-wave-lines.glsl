@@ -1,8 +1,9 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
 
 #include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
@@ -13,10 +14,10 @@ out vec4 pixel;
 void main() {
 
     // convert to polar
-    vec2 r = toPolar(ref(UV, u_resolution) * 40.);
+    vec2 r = toPolar(ref(UV, R) * 40.);
 
     // add two oscilators on the radial coordinate
-    r += vec2(r.x * (sin(r.y * 3. + u_time) *.2 + sin(r.y * 7. - u_time) *.2),0.);
+    r += vec2(r.x * (sin(r.y * 3. + T) *.2 + sin(r.y * 7. - T) *.2),0.);
 
     float f = 
         // repeat on the radial axis and convert to cartesian

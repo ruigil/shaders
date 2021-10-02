@@ -1,8 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 
 #include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
@@ -12,7 +14,7 @@ uniform float u_time;
 // the bump function is just some wave interference mirrored
 float bump(vec2 r) {
     r = fold( fold(vec2(r.x,abs(r.y)), radians(120.)) , radians(-120.)); 
-    return fill(sin(length(50.*(r-vec2(0.,.5+.5+sin(u_time*.1)))) -u_time * 3.) + sin(length(r*25.)-u_time*2.), 1., true);
+    return fill(sin(length(50.*(r-vec2(0.,.5+.5+sin(T*.1)))) -T * 3.) + sin(length(r*25.)-T*2.), 1., true);
 }
 
 // the bumpmap function accept a reference frame,
@@ -51,7 +53,7 @@ out vec4 pixel;
 void main() {
 
     // reference frame
-    vec2 r = ref(UV, u_resolution);
+    vec2 r = ref(UV, R);
  
     // to calculate a normal, we use the finite diffrence method
     // where we sample the function in xy directions to get an orientation
@@ -59,7 +61,7 @@ void main() {
   	const vec2 e = vec2(.01, 0);
     vec3 normal = normalize(vec3(bump( r + e.xy) - bump( r - e.xy), bump( r + e.yx) - bump( r - e.yx), 1. ));
   
-    float n = 3.14*noise(vec2(u_time*.1));
+    float n = 3.14*noise(vec2(T*.1));
     vec3 lp = vec3(cos(n),sin(2.*n), .5);
 
     vec3 color = bumpmap(r, vec3(.2), lp, normal);
