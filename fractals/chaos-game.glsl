@@ -1,9 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform vec2 u_mouse;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 uniform sampler2D u_buffer0;
 
 #include '../constants.glsl'
@@ -29,11 +30,11 @@ void main() {
     // of the last point between frames
 
     // reference frame
-    vec2 r = ref(UV, u_resolution) * 2.;
+    vec2 r = ref(UV, R) * 2.;
     // number of vertices
     float v = 3.;
     // the address in the texture that is used for memory.
-    vec2 mem = vec2(.5/u_resolution.xy);
+    vec2 mem = vec2(.5/R);
     // the result
     vec4 result = vec4(0.);
 
@@ -45,7 +46,7 @@ void main() {
         vec2 lp = texture(u_buffer0,mem).rg;
         
         // get a random number btween 0 and the number of vertices-1
-        float rd = floor(hash(vec2(u_time+2.)) * v); 
+        float rd = floor(hash(vec2(T+2.)) * v); 
         
         // use it to get a vector between tha last point and the new vertice
         vec2 nv = vec2(cos(rd*(6.283/v)),sin(rd*(6.283/v))) - lp.xy;

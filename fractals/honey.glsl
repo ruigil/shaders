@@ -1,9 +1,10 @@
 #version 300 es
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform vec2 u_mouse;
-uniform float u_time;
+uniform vec2 u_resolution; // defined as R
+uniform vec2 u_mouse; // defined as M
+uniform float u_time; // defined as T
+
 
 #include '../constants.glsl'
 #include '../utils/2d-utils.glsl'
@@ -12,10 +13,10 @@ uniform float u_time;
 out vec4 pixel;
 void main() {
 
-    vec2 r = ref(UV, u_resolution) * 2.;
+    vec2 r = ref(UV, R) * 2.;
 
     // mouse in normalized coordinates
-    vec2 m = u_mouse/u_resolution;
+    vec2 m = M/R;
     // controls the number of iterations
     int n = int(floor(m.x*6.));
 
