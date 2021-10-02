@@ -13,7 +13,7 @@ uniform float u_time;
 out vec4 pixel;
 void main() {
     
-    vec2 r = ref(UV, u_resolution);
+    vec2 r = ref(UV, u_resolution) * 2.;
 
     float f = 0.; // result
 

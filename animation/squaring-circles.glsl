@@ -14,7 +14,7 @@ uniform float u_time;
 out vec4 pixel;
 void main() {
     
-    vec2 r = ref(UV, u_resolution);
+    vec2 r = ref(UV, u_resolution) * 2.;
 
     // the domain of easing function is [0,1]
     float t = fract(u_time/4.);
