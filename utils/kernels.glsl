@@ -22,6 +22,6 @@ vec4 conv3x3(float[9] kernel, sampler2D t, vec2 p, float scale) {
         vec2 offset = ( vec2( (i/3) - 1 , (i%3) - 1 ) * PIXEL_SIZE * scale  );
         value += kernel[i] * texture(t, fract(p + offset) );
     } 
-        
+    
     return value;
 }
