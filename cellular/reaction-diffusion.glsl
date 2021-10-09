@@ -39,8 +39,8 @@ vec2 rd(sampler2D t, vec2 p, float feed, float kill, float scale) {
     vec2 ab = texture(t, p ).rg;
 
     // calculate the dA and dB
-    float da = .2097 * laplace.r - (ab.r * ab.g * ab.g) + feed * (1. - ab.r);
-    float db = .1050 * laplace.g + (ab.r * ab.g * ab.g) - (feed + kill) * ab.g;
+    float da = ((.2097 * laplace.r) - (ab.r * ab.g * ab.g)) + (feed * (1. - ab.r));
+    float db = ((.1050 * laplace.g) + (ab.r * ab.g * ab.g)) - ((feed + kill) * ab.g);
 
     // we use the 1 frame as the dt time step 
     return ab +  1./*dt*/ * vec2(da,db); 
