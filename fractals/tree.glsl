@@ -30,7 +30,7 @@ void main() {
         lr -= vec2(.0,.35);
         // noise to add variation to the angle of branches
         float n1 = (gnoise(vec2(float(i),T*.3)));
-        float n2 = (gnoise(vec2(float(i*3+1),T*.4)));
+        float n2 = (gnoise(vec2(float(i*3+1),4.4)));
         
         lr = lr.x > 0. ? 
         // rotate, translate and scale
@@ -38,12 +38,12 @@ void main() {
             ((lr * rot(radians(-35.-n2*20.)) ) + vec2(0, -.2)) * vec2(1.3+(n2*.5),1.3+(n1*.5)); 
 
         // add the branch
-        f += fill(rect(lr + vec2(gnoise(lr*5.)* (float(i+1)*0.05) ,0.), vec2(.2,.7)), EPS, true);
+        f += fill(rect(lr + vec2(gnoise(lr*5.)* (float(i+1)*0.03) ,0.), vec2(.2-(r.y*.1),.7)), EPS, true);
         // and repeat...
     }
 
     // add finally add the trunk
-    f += fill(rect(r + vec2(gnoise(r*5.)*.05 ,0.), vec2(.2,.7)), EPS, true);
+    f += fill(rect(r + vec2(gnoise(r*5.)*.05 ,0.), vec2(.2-(r.y*.1),.7)), EPS, true);
 
     pixel = vec4(vec3(f),1.);
 }
